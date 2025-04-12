@@ -1,0 +1,7 @@
+{
+  "name": "IronMan",
+  "order": 8,
+  "type": 0,
+  "isPreset": true,
+  "bindSound": "IronMan"
+}

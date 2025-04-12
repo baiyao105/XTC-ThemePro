@@ -1,0 +1,13 @@
+#!/system/bin/sh
+SCRIPT_PATH="/data/adb/modules/XTC-ThemePro/themepro.sh"
+if [ ! -f "$SCRIPT_PATH" ]; then
+    echo "Error: script not found"
+    exit 1
+fi
+
+if [ -z "$1" ]; then
+    sh "$SCRIPT_PATH" "getdevice"
+    exit 1
+fi
+
+sh "$SCRIPT_PATH" "$@"

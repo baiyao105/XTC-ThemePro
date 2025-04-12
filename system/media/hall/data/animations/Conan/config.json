@@ -1,0 +1,7 @@
+{
+  "name": "Conan",
+  "order": 15,
+  "type": 0,
+  "isPreset": true,
+  "bindSound": "Conan"
+}

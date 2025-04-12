@@ -1,0 +1,7 @@
+{
+  "name": "Spider",
+  "order": 10,
+  "type": 0,
+  "isPreset": true,
+  "bindSound": "Spider"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Tourbillon",
+  "nameCompat": {
+        "def": "黑耀陀飞轮",
+        "zh-CN": "黑耀陀飞轮",
+        "en": "黑耀陀飞轮",
+        "zh-HK": "黑耀陀飞轮"
+    },
+
+  "order": 18,
+  "type": 0,
+  "isPreset": true,
+  "bindSound": "Tourbillon"
+}

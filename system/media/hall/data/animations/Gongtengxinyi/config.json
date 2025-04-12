@@ -1,0 +1,13 @@
+{
+  "name": "Gongtengxinyi",
+	"nameCompat": {
+	"def": "工藤新一",
+	"zh-CN": "工藤新一",
+	"en": "工藤新一",
+	"zh-HK": "工藤新一"
+},
+  "order": 16,
+  "type": 0,
+  "isPreset": true,
+  "bindSound": "Gongtengxinyi"
+}

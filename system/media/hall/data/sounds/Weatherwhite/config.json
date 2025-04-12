@@ -1,0 +1,12 @@
+{
+  "name": "Weatherwhite",
+      "nameCompat": {
+        "def": "云游幻境",
+        "zh-CN": "云游幻境",
+        "en": "云游幻境",
+        "zh-HK": "云游幻境"
+    },
+  "order": 21,
+  "type": 1,
+  "isPreset": true
+}
