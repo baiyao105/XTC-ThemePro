@@ -19,13 +19,25 @@ gethitokoto() {
     fi
 }
 
+getinstall() {
+    if [ -n "$1" ] && [ "$1" = "true" ]; then
+        touch "${MODDIR}/Sundry/install"
+    fi
+    install_file="${MODDIR}/Sundry/install"
+    if [ -f "$install_file" ]; then
+        echo "true"
+    else
+        echo "false"
+    fi
+}
+
 getdevice() {
     bindnumber=$(getprop ro.boot.bindnumber)
     chipid=$(getprop ro.boot.xtc.chipid)
     model=$(_grep_prop ro.product.innermodel)
     serverinner=$(getprop persist.sys.serverinner "${model}")
     if [ -z "$serverinner" ]; then
-        serverinner=${model}
+        serverinner="${model}"
     fi
     if [ -z "$chipid" ]; then
         echo "Chipid获取失败"
@@ -48,11 +60,11 @@ getdevice() {
     module_version=$(_grep_prop version "${MODDIR}/module.prop")
     module_code=$(_grep_prop versionCode "${MODDIR}/module.prop")
 
-    config_file="${MODDIR}/Sundry/config.conf"
-    if [ -f "$config_file" ]; then
-        log_enabled=$(grep -v '^#' "$config_file" | grep "^log=" | cut -f2 -d '=')
-        log_path=$(grep -v '^#' "$config_file" | grep "^log_path=" | cut -f2 -d '=')
-    fi
+    #config_file="${MODDIR}/Sundry/config.conf"
+    #if [ -f "$config_file" ]; then
+    #    log_enabled=$(grep -v '^#' "$config_file" | grep "^log=" | cut -f2 -d '=')
+    #    log_path=$(grep -v '^#' "$config_file" | grep "^log_path=" | cut -f2 -d '=')
+    #fi
     echo "================================================================="
     echo "XTC-ThemePro @baiyao105 - Debug信息"
     echo "${best_text}"
@@ -66,7 +78,6 @@ getdevice() {
     if [ -n "$factory_version" ] && [ "$factory_version" != "$max_version" ]; then
         echo "个性主题版本(系统内置): ${factory_versionName} (${factory_version})"
     fi
-    echo "日志配置: 启用=${log_enabled:-false}, 路径=${log_path:-未设置}"
     echo "================================================================="
 }
 
@@ -94,6 +105,9 @@ case "$1" in
         ;;
     "getdevice")
         getdevice
+        ;;
+    "getinstall")
+        getinstall "$2"
         ;;
     "prop")
         if [ -n "$2" ]; then

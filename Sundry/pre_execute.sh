@@ -1,7 +1,7 @@
 #!/system/bin/sh
 # Script by XTC-ThemePro - @baiyao105
-MODPATH=$(cd "$(dirname "$0")/../.." && pwd)
+MODPATH=$(cd "$(dirname "$0")/.." && pwd)
 date +"%H:%M:%S" > "${MODPATH}/crontab_time"
-best_text=$(themepro get.hitokoto)
+best_text=$(themepro gethitokoto)
 sed -i '/^description=/d' "${MODPATH}/module.prop"
-echo "description=${best_text} 🌸 为主题加点新花样 - 上次crontab时间: $(cat "${MODPATH}/crontab_time")" >>"${MODPATH}/module.prop"
+echo "description=🌸 为主题加点新花样 - ●${best_text} - 上次crontab时间: $(cat "${MODPATH}/crontab_time")" >> "${MODPATH}/module.prop"

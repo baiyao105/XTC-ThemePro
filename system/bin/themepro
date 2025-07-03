@@ -1,5 +1,5 @@
 #!/system/bin/sh
-SCRIPT_PATH="/data/adb/modules/XTC-ThemePro/Sundry/themepro.sh"
+SCRIPT_PATH="/data/adb/modules/XTC-ThemePro/themepro.sh"
 if [ ! -f "$SCRIPT_PATH" ]; then
     echo "Error: script not found"
     exit 1

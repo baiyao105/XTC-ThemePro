@@ -167,18 +167,25 @@ sundry_shell(){
     am force-stop com.xtc.theme 2>/dev/null || true
     rm -rf /sdcard/xtc/themepackage 2>/dev/null || true
     rm -rf /data/user/0/com.xtc.xws 2>/dev/null || true
-    pm clear com.xtc.theme >&2 || true
+    rm -r /sdcard/xtc
+    rm -r /data/data/com.xtc.theme
+    rm -r /data/data/com.xtc.datacenter
+    rm -r /data/data/com.xtc.xws
+    pm clear com.xtc.theme >&2
+    pm clear com.xtc.datacenter >&2
+    pm clear com.xtc.xws  >&2
     am force-stop com.xtc.theme 2>/dev/null || true
     ui_print "- 替换数据库"
     theme_db="/data/user/0/com.xtc.theme/databases"
     mkdir -p ${theme_db}
     rm -rf "${theme_db}/theme_package.db"
+    am force-stop com.xtc.theme 2>/dev/null || true
     cp -af "${TMPDIR}/theme_package.db" "${theme_db}/theme_package.db"
-    cp "${TMPDIR}/personality_charge.db" "${theme_db}/personality_charge.db"
+    cp -af "${TMPDIR}/personality_charge.db" "${theme_db}/personality_charge.db"
     set_perm_recursive "${theme_db}" 0 0 0755 0400 || true
     chmod 700 "${theme_db}"/*
     Modata="/data/adb/modules/${id}"
-    echo "*/60 * * * * ${Modata}/Sundry/pre_execute.sh &&  ${Modata}/Sundry/rewritedb.sh" >"${MODPATH}/root"
+    echo "*/60 * * * * ${Modata}/Sundry/pre_execute.sh && ${Modata}/Sundry/rewritedb.sh" >"${MODPATH}/root"
     ui_print "- 释放文件"
     ui_print "- 过程比较久,请稍等一小会(≧﹏≦)"
     mkdir -p "${MODPATH}/system"
@@ -192,8 +199,8 @@ sundry_shell(){
     unzip -o "${ZIPFILE}" 'system/*' -d "${MODPATH}" >&2 || abort "解压挂载文件出错"
     unzip -o "${ZIPFILE}" 'Sundry/*' -d "${MODPATH}" >&2 || abort "解压挂载文件出错"
     [ -f "${MODPATH}/module.prop" ] || abort "module.prop 文件未能成功解压"
+    rm -rf "${MODPATH}/theme12150.apk"
     cmd package compile -m everything-profile -f com.xtc.theme >&2 || true
-    ui_print "- 安装好啦ヾ(≧▽≦*)o"
 }
 set_permissions() {
   chmod +x "${MODPATH}/Sundry/*" || true
@@ -205,6 +212,8 @@ set_permissions() {
   set_perm_recursive "${MODPATH}/Sundry" 0 0 0755 0700 || true
   set_perm_recursive "${MODPATH}/system/bin/themepro" 0 0 0755 0700 || true
   set_perm_recursive "${MODPATH}/Sundry/themepro.sh" 0 0 0755 0700 || true
+  ui_print "- 安装好啦ヾ(≧▽≦*)o"
+  ui_print "- 小贴士: 重启后桌面&主题应用数据将会重置,如停止运行是正常现象哦~"
   ui_print "- 正在努力清理环境中哇 ＞﹏＜"
 }
 
