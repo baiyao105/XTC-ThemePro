@@ -31,7 +31,7 @@ on_sundry() {
         module.prop
     "
     for file in $required_files; do
-        unzip -j -o "${ZIPFILE}" "${file}" -d "${TMPDIR}" || abort "解压安装时文件失败:${file}" 2>/dev/null
+        unzip -j -o "${ZIPFILE}" "${file}" -d "${TMPDIR}" >&2 || abort "解压安装时文件失败:${file}"
     done
     mkdir -p "/sdcard/Android/baiyao105/ThemePro"
     bindnumber=$(getprop ro.boot.bindnumber)
@@ -80,12 +80,17 @@ on_sundry() {
     fi
 
     hitokoto_file="${TMPDIR}/hitokoto"
-    total_lines=$(sed -n 's/.*text:\["\([^"]*\)".*/\1/p' "$hitokoto_file" | wc -l)
-    if [ "$total_lines" -gt 0 ]; then
-        random_line=$(($(date +%s) % total_lines + 1))
-        best_text=$(sed -n 's/.*text:\["\([^"]*\)".*/\1/p' "$hitokoto_file" | sed -n "${random_line}p" | sed 's/\\//g')
+    if [ -f "$hitokoto_file" ]; then
+        all_texts=$(sed -n 's/.*text:\[\(.*\)\]/\1/p' "$hitokoto_file" | sed 's/","/"\n"/g' | sed 's/^"//;s/"$//')
+        total_count=$(echo "$all_texts" | wc -l)
+        if [ "$total_count" -gt 0 ]; then
+            random_num=$(($(date +%s) % total_count + 1))
+            best_text=$(echo "$all_texts" | sed -n "${random_num}p")
+        else
+            best_text="唔?"
+        fi
     else
-        best_text="唔?"
+        best_text="唔?文件未找到...(?"
     fi
     cta=$(getprop ro.product.cta.model)
     cta_ver=$(getprop ro.xtc.ctaversion)
@@ -129,7 +134,7 @@ module_validation(){
         ui_print "! Magisk版本低于23.0: $MAGISK_VER_CODE，安装终止。"
         abort "!  Magisk版本低于23.0"
     else
-        ui_print " - Magisk版本: $MAGISK_VER ($MAGISK_VER_CODE)"
+        ui_print "- Magisk版本: $MAGISK_VER ($MAGISK_VER_CODE)"
     fi
     if [ "$API" -ne 27 ]; then
     ui_print "! 安卓版本不兼容: ${API}，安装终止。"
@@ -162,7 +167,7 @@ sundry_shell(){
     am force-stop com.xtc.theme 2>/dev/null || true
     rm -rf /sdcard/xtc/themepackage 2>/dev/null || true
     rm -rf /data/user/0/com.xtc.xws 2>/dev/null || true
-    pm clear com.xtc.theme 2>/dev/null || true
+    pm clear com.xtc.theme >&2 || true
     am force-stop com.xtc.theme 2>/dev/null || true
     ui_print "- 替换数据库"
     theme_db="/data/user/0/com.xtc.theme/databases"
@@ -183,10 +188,11 @@ sundry_shell(){
     unzip -j -o "${ZIPFILE}" 'files/*' -d "${MODPATH}" >&2 || abort "解压数据库时出错"
     unzip -j -o "${ZIPFILE}" 'Sundry/post-fs-data.sh' -d "${MODPATH}" >&2 || abort "解压脚本时出错"
     unzip -j -o "${ZIPFILE}" 'uninstall.sh' -d "${MODPATH}" >&2 || abort "解压脚本时出错"
+    unzip -j -o "${ZIPFILE}" 'action.sh' -d "${MODPATH}" >&2 || abort "解压脚本时出错"
     unzip -o "${ZIPFILE}" 'system/*' -d "${MODPATH}" >&2 || abort "解压挂载文件出错"
     unzip -o "${ZIPFILE}" 'Sundry/*' -d "${MODPATH}" >&2 || abort "解压挂载文件出错"
     [ -f "${MODPATH}/module.prop" ] || abort "module.prop 文件未能成功解压"
-    cmd package compile -m everything-profile -f com.xtc.theme 2>/dev/null || true
+    cmd package compile -m everything-profile -f com.xtc.theme >&2 || true
     ui_print "- 安装好啦ヾ(≧▽≦*)o"
 }
 set_permissions() {
@@ -199,6 +205,7 @@ set_permissions() {
   set_perm_recursive "${MODPATH}/Sundry" 0 0 0755 0700 || true
   set_perm_recursive "${MODPATH}/system/bin/themepro" 0 0 0755 0700 || true
   set_perm_recursive "${MODPATH}/Sundry/themepro.sh" 0 0 0755 0700 || true
+  ui_print "- 正在努力清理环境中哇 ＞﹏＜"
 }
 
 

@@ -163,7 +163,6 @@ $MODPATH/README.md $MODPATH/.git* 2>/dev/null
 ##############
 
 cd /
-ui_print "- 正在努力清理环境中哇"
 $BOOTMODE || recovery_cleanup
 rm -rf $TMPDIR
 
