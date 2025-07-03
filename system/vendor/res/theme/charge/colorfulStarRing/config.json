@@ -1,0 +1,9 @@
+{
+   "chargeName":"炫彩星环",
+    "chargeNameFormat":{"chargeName_zh":"炫彩星环","chargeName_en":"炫彩星环","chargeName_rHK":"炫彩星环","chargeName_rTW":"炫彩星环"},
+    "sourceName":"colorfulStarRing",
+    "animType":6,
+    "layoutName":"layout_unlock_charge_colorful_star_ring",
+    "packageName":"com.xtc.charge.colorfulStarRing",
+    "chargeVersion":""
+}

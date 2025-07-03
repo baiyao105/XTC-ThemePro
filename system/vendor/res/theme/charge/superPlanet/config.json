@@ -1,0 +1,9 @@
+{
+	"chargeName":"超级星球",
+	"chargeNameFormat":{"chargeName_zh":"超级星球","chargeName_en":"superPlanet","chargeName_rHK":"超級星球","chargeName_rTW":"超級星球"},
+	"sourceName":"superPlanet",
+	"animType":4,
+	"layoutName":"layout_unlock_charge_super_planet",
+	"packageName":"com.xtc.charge.superPlanet",
+	"chargeVersion":""
+}

@@ -1,0 +1,9 @@
+{
+	"chargeName":"万花疏影",
+	"chargeNameFormat":{"chargeName_zh":"万花疏影","chargeName_en":"flowerShadow","chargeName_rHK":"萬花疏影","chargeName_rTW":"萬花疏影"},
+	"sourceName":"flowerShadow",
+	"animType":5,
+	"layoutName":"layout_unlock_charge_flower_shadow",
+	"packageName":"",
+	"chargeVersion":""
+}
