@@ -31,9 +31,8 @@ on_sundry() {
         module.prop
     "
     for file in $required_files; do
-        unzip -j -o "${ZIPFILE}" "${file}" -d "${TMPDIR}" || abort "解压安装时文件失败:${file}"
+        unzip -j -o "${ZIPFILE}" "${file}" -d "${TMPDIR}" || abort "解压安装时文件失败:${file}" 2>/dev/null
     done
-    echo "0.8.1" > "/sdcard/Android/baiyao105/ThemePro/version_installed"
     mkdir -p "/sdcard/Android/baiyao105/ThemePro"
     bindnumber=$(getprop ro.boot.bindnumber)
     chipid=$(getprop ro.boot.xtc.chipid)
@@ -81,7 +80,13 @@ on_sundry() {
     fi
 
     hitokoto_file="${TMPDIR}/hitokoto"
-    best_text=$(sed -n 's/.*text:\["\([^"]*\)".*/\1/p' "$hitokoto_file" | tr ',' '\n' | shuf -n 1 | sed 's/\\//g')
+    total_lines=$(sed -n 's/.*text:\["\([^"]*\)".*/\1/p' "$hitokoto_file" | wc -l)
+    if [ "$total_lines" -gt 0 ]; then
+        random_line=$(($(date +%s) % total_lines + 1))
+        best_text=$(sed -n 's/.*text:\["\([^"]*\)".*/\1/p' "$hitokoto_file" | sed -n "${random_line}p" | sed 's/\\//g')
+    else
+        best_text="唔?"
+    fi
     cta=$(getprop ro.product.cta.model)
     cta_ver=$(getprop ro.xtc.ctaversion)
     id=$(grep_prop id "$TMPDIR/module.prop")
@@ -97,6 +102,7 @@ print_modname() {
     ui_print "~ $best_text"
     ui_print "~ 开始安装q(≧▽≦q)"
     ui_print "#####################################################"
+    echo "${ver}" > "/sdcard/Android/baiyao105/ThemePro/version"
     case $model in
         I25)    ui_print "- 您的机型: Z7-${imoo_ver}_${produce}.${cta}(${cta_ver}).${API}" ;;
         I32)    ui_print "- 您的机型: Z8|Z8少年版-${imoo_ver}_${produce}.${cta}(${cta_ver}).${API}" ;;
@@ -136,6 +142,16 @@ module_validation(){
 sundry_shell(){
     current_versions=$(dumpsys package com.xtc.theme | grep versionCode | awk '{print $1}' | sed 's/versionCode=//' | sort -nr)
     max_version=$(echo "$current_versions" | head -n 1)
+    directories="
+        /data/adb/modules/theme_ful
+        /data/adb/modules/alltheme
+    "
+    for dir in ${directories}; do
+        if [ -d "$dir" ]; then
+            touch "$dir/skip_mount"
+            touch "$dir/remove"
+        fi
+    done
     if [ -z "$max_version" ] || [ "$max_version" -lt 12150 ]; then
         ui_print "- 个性主题版本过低(${max_version:-无}),正在覆盖升级"
         pm install -r -d -t "$TMPDIR/theme12150.apk" || echo "- 看起来失败了呢..."
@@ -143,11 +159,11 @@ sundry_shell(){
         ui_print "- 个性主题已满足要求($max_version)"
     fi
     ui_print "- 清除缓余文件"
-    am force-stop com.xtc.theme
+    am force-stop com.xtc.theme 2>/dev/null || true
     rm -rf /sdcard/xtc/themepackage 2>/dev/null || true
     rm -rf /data/user/0/com.xtc.xws 2>/dev/null || true
-    pm clear com.xtc.theme
-    am force-stop com.xtc.theme
+    pm clear com.xtc.theme 2>/dev/null || true
+    am force-stop com.xtc.theme 2>/dev/null || true
     ui_print "- 替换数据库"
     theme_db="/data/user/0/com.xtc.theme/databases"
     mkdir -p ${theme_db}
@@ -170,7 +186,7 @@ sundry_shell(){
     unzip -o "${ZIPFILE}" 'system/*' -d "${MODPATH}" >&2 || abort "解压挂载文件出错"
     unzip -o "${ZIPFILE}" 'Sundry/*' -d "${MODPATH}" >&2 || abort "解压挂载文件出错"
     [ -f "${MODPATH}/module.prop" ] || abort "module.prop 文件未能成功解压"
-    cmd package compile -m everything-profile -f com.xtc.theme
+    cmd package compile -m everything-profile -f com.xtc.theme 2>/dev/null || true
     ui_print "- 安装好啦ヾ(≧▽≦*)o"
 }
 set_permissions() {

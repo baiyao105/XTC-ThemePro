@@ -5,10 +5,16 @@ MODDIR=${0%/*}
 gethitokoto() {
     hitokoto_file="${MODDIR}/Sundry/hitokoto"
     if [ -f "$hitokoto_file" ]; then
-        best_text=$(sed -n 's/.*text:\["\([^"]*\)".*/\1/p' "$hitokoto_file" | tr ',' '\n' | shuf -n 1 | sed 's/\\//g')
-        echo "${best_text}"
+        total_lines=$(sed -n 's/.*text:\["\([^"]*\)".*/\1/p' "$hitokoto_file" | wc -l)
+        if [ "$total_lines" -gt 0 ]; then
+            random_line=$(($(date +%s) % total_lines + 1))
+            best_text=$(sed -n 's/.*text:\["\([^"]*\)".*/\1/p' "$hitokoto_file" | sed -n "${random_line}p" | sed 's/\\//g')
+            echo "${best_text}"
+        else
+            echo "唔?"
+        fi
     else
-        echo ""
+        echo "唔?,没有找到文件(?"
     fi
 }
 
