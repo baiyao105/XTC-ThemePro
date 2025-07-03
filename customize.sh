@@ -84,6 +84,7 @@ on_sundry() {
     best_text=$(sed -n 's/.*text:\["\([^"]*\)".*/\1/p' "$hitokoto_file" | tr ',' '\n' | shuf -n 1 | sed 's/\\//g')
     cta=$(getprop ro.product.cta.model)
     cta_ver=$(getprop ro.xtc.ctaversion)
+    id=$(grep_prop id "$TMPDIR/module.prop")
     ver=$(grep_prop version "$TMPDIR/module.prop")
     code=$(grep_prop versionCode "$TMPDIR/module.prop")
     imoo_ver=$(grep_prop ro.product.current.softversion)
@@ -137,13 +138,13 @@ sundry_shell(){
     max_version=$(echo "$current_versions" | head -n 1)
     if [ -z "$max_version" ] || [ "$max_version" -lt 12150 ]; then
         ui_print "- 个性主题版本过低(${max_version:-无}),正在覆盖升级"
-        pm install -r -d -t "$TMPDIR/theme12150.apk"
+        pm install -r -d -t "$TMPDIR/theme12150.apk" || echo "- 看起来失败了呢..."
     else
         ui_print "- 个性主题已满足要求($max_version)"
     fi
     ui_print "- 清除缓余文件"
     am force-stop com.xtc.theme
-    rm -rf /sdcard/xtc/themepackage
+    rm -rf /sdcard/xtc/themepackage 2>/dev/null || true
     rm -rf /data/user/0/com.xtc.xws 2>/dev/null || true
     pm clear com.xtc.theme
     am force-stop com.xtc.theme
@@ -155,7 +156,8 @@ sundry_shell(){
     cp "${TMPDIR}/personality_charge.db" "${theme_db}/personality_charge.db"
     set_perm_recursive "${theme_db}" 0 0 0755 0400 || true
     chmod 700 "${theme_db}"/*
-    echo "*/60 * * * * ${MODPATH}/Sundry/pre_execute.sh && ${MODPATH}/Sundry/rewritedb.sh" >"${MODPATH}/root"
+    Modata="/data/adb/modules/${id}"
+    echo "*/60 * * * * ${Modata}/Sundry/pre_execute.sh &&  ${Modata}/Sundry/rewritedb.sh" >"${MODPATH}/root"
     ui_print "- 释放文件"
     ui_print "- 过程比较久,请稍等一小会(≧﹏≦)"
     mkdir -p "${MODPATH}/system"
@@ -163,18 +165,24 @@ sundry_shell(){
     unzip -j -o "${ZIPFILE}" 'module.prop' -d "${MODPATH}" >&2 || abort "解压描述文件时出错"
     [ -f "${MODPATH}/module.prop" ] || abort "module.prop 文件未能成功解压"
     unzip -j -o "${ZIPFILE}" 'files/*' -d "${MODPATH}" >&2 || abort "解压数据库时出错"
-    unzip -j -o "${ZIPFILE}" 'files/post-fs-data.sh' -d "${MODPATH}" >&2 || abort "解压脚本时出错"
+    unzip -j -o "${ZIPFILE}" 'Sundry/post-fs-data.sh' -d "${MODPATH}" >&2 || abort "解压脚本时出错"
     unzip -j -o "${ZIPFILE}" 'uninstall.sh' -d "${MODPATH}" >&2 || abort "解压脚本时出错"
     unzip -o "${ZIPFILE}" 'system/*' -d "${MODPATH}" >&2 || abort "解压挂载文件出错"
     unzip -o "${ZIPFILE}" 'Sundry/*' -d "${MODPATH}" >&2 || abort "解压挂载文件出错"
     [ -f "${MODPATH}/module.prop" ] || abort "module.prop 文件未能成功解压"
+    cmd package compile -m everything-profile -f com.xtc.theme
     ui_print "- 安装好啦ヾ(≧▽≦*)o"
 }
 set_permissions() {
+  chmod +x "${MODPATH}/Sundry/*" || true
   chmod +x "${MODPATH}/Sundry/rewritedb.sh"
-  chmod +x "${MODPATH}/files/themepro.sh"
+  chmod +x "${MODPATH}/Sundry/themepro.sh"
   chmod +x "${MODPATH}/system/bin/themepro"
   set_perm_recursive "${MODPATH}" 0 0 0755 0644
+  set_perm_recursive "${MODPATH}/root" 0 0 0755 0700 || true
+  set_perm_recursive "${MODPATH}/Sundry" 0 0 0755 0700 || true
+  set_perm_recursive "${MODPATH}/system/bin/themepro" 0 0 0755 0700 || true
+  set_perm_recursive "${MODPATH}/Sundry/themepro.sh" 0 0 0755 0700 || true
 }
 
 
