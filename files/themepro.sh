@@ -2,9 +2,9 @@
 # Script by XTC-ThemePro - @baiyao105
 
 MODDIR=${0%/*}
-function gethitokoto() {
+gethitokoto() {
     hitokoto_file="${MODDIR}/Sundry/hitokoto"
-    if [[ -f "$hitokoto_file" ]]; then
+    if [ -f "$hitokoto_file" ]; then
         best_text=$(grep -oP '(?<=text:\[").*?(?="\])' "$hitokoto_file" | tr ',' '\n' | shuf -n 1 | sed 's/\\//g')
         echo "${best_text}"
     else
@@ -12,16 +12,16 @@ function gethitokoto() {
     fi
 }
 
-function getdevice() {
+getdevice() {
     bindnumber=$(getprop ro.boot.bindnumber)
     chipid=$(getprop ro.boot.xtc.chipid)
     model=$(_grep_prop ro.product.innermodel)
-    serverinner=$(getprop persist.sys.serverinner ${model})
-    if [[ -z "$serverinner" ]]; then
+    serverinner=$(getprop persist.sys.serverinner "${model}")
+    if [ -z "$serverinner" ]; then
         serverinner=${model}
     fi
-    if [[ -z "$chipid" ]]; then
-        echo "Chipid??????"
+    if [ -z "$chipid" ]; then
+        echo "Chipid获取失败"
         return 1
     fi
     Hwmac=$(cat /sys/class/net/wlan0/address)
@@ -32,63 +32,62 @@ function getdevice() {
     current_versionNames=$(dumpsys package com.xtc.theme | grep versionName | awk '{print $1}' | sort -nr)
     max_version=$(echo "$current_versions" | head -n 1)
     max_versionName=$(echo "$current_versionNames" | head -n 1)
-    
-    crontab_time=$(cat "${MODPATH}/crontab_time")
+
+    crontab_time=$(cat "${MODDIR}/crontab_time" 2>/dev/null || echo "未设置")
     best_text=$(gethitokoto)
-    
-    module_version=$(grep_prop version "${MODDIR}/module.prop")
-    module_code=$(grep_prop versionCode "${MODDIR}/module.prop")
-    
+
+    module_version=$(_grep_prop version "${MODDIR}/module.prop")
+    module_code=$(_grep_prop versionCode "${MODDIR}/module.prop")
+
     config_file="${MODDIR}/Sundry/config.conf"
-    if [[ -f "$config_file" ]]; then
+    if [ -f "$config_file" ]; then
         log_enabled=$(grep -v '^#' "$config_file" | grep "^log=" | cut -f2 -d '=')
         log_path=$(grep -v '^#' "$config_file" | grep "^log_path=" | cut -f2 -d '=')
     fi
     echo "=================================================================="
-    echo "XTC-ThemePro @baiyao105 ???????????"
-    echo "??????: ${serverinner}"
-    echo "???: ${bindnumber}"
+    echo "XTC-ThemePro @baiyao105 设备信息查询"
+    echo "服务型号: ${serverinner}"
+    echo "绑定号: ${bindnumber}"
     echo "ChipID: ${chipid}"
-    echo "????????: ${Ostring}"
-    echo "Crontab???: ${crontab_time}"
-    echo "???: ${best_text}"
-    echo "?????: ${module_version} (${module_code})"
-    echo "??????????: ${max_versionName}"
-    echo "??????????code: ${max_version}"
-    echo "???????: ??=${log_enabled:-false}, ????=${log_path:-??????}"
+    echo "设备标识: ${Ostring}"
+    echo "Crontab: ${crontab_time}"
+    echo "一言: ${best_text}"
+    echo "模块版本: ${module_version} (${module_code})"
+    echo "主题版本: ${max_versionName} - ${max_version}"
+    echo "日志配置: 启用=${log_enabled:-false}, 路径=${log_path:-未设置}"
     echo "=================================================================="
 }
 
-function prop() {
-    local prop_value=$(_grep_prop "$1")
-    if [[ -n "$prop_value" ]]; then
+prop() {
+    prop_value=$(_grep_prop "$1")
+    if [ -n "$prop_value" ]; then
         echo "${prop_value}"
     else
-        echo "?????????: $1"
+        echo "属性未找到: $1"
         return 1
     fi
 }
 
-# ????????
+# 获取属性值
 _grep_prop() {
-    local REGEX="s/$1=//p"
+    REGEX="s/$1=//p"
     shift
-    local FILES=$@
-    [[ -z $FILES ]] && FILES="/system/build.prop /vendor/build.prop /product/build.prop"
-    sed -n "$REGEX" $FILES 2>/dev/null | head -n 1
+    FILES="$*"
+    [ -z "$FILES" ] && FILES="/system/build.prop /vendor/build.prop /product/build.prop"
+    sed -n "$REGEX" "$FILES" 2>/dev/null | head -n 1
 }
 
-# ????????
+# 命令处理
 case "$1" in
     "gethitokoto")
         gethitokoto
         ;;
-    "getdrvice")
-        getdrvice
+    "getdevice")
+        getdevice
         ;;
     "prop")
-        if [[ -n "$2" ]]; then
-            prop_search "$2"
+        if [ -n "$2" ]; then
+            prop "$2"
         else
             echo "Usage: themepro prop <property_name>"
             exit 1
@@ -97,8 +96,8 @@ case "$1" in
     *)
         echo "Usage: themepro <command>"
         echo "Commands:"
-        echo "  gethitokoto - ??????"
-        echo "  prop <property_name> - ?????????"
+        echo "  gethitokoto - 获取一言"
+        echo "  prop <property_name> - 获取系统属性"
         exit 1
         ;;
 esac
