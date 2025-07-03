@@ -30,10 +30,9 @@ is_legacy_script() {
 }
 
 print_modname() {
-  local len
-  len=`echo -n $MODNAME | wc -c`
+  len=$(echo -n "$MODNAME" | wc -c)
   len=$((len + 2))
-  local pounds=`printf "%${len}s" | tr ' ' '*'`
+  pounds=$(printf "%${len}s" | tr ' ' '*')
   ui_print "  Developed by baiyao105  "
   ui_print "*******************"
 }
@@ -87,7 +86,7 @@ mkdir -p $MODPATH
 ##########
 
 if is_legacy_script; then
-  unzip -oj "$ZIPFILE"module.prop install.sh uninstall.sh 'common/*' -d $TMPDIR >&2
+  unzip -oj "$ZIPFILE" module.prop install.sh uninstall.sh 'common/*' -d $TMPDIR >&2
 
   # Load install script
   . $TMPDIR/install.sh

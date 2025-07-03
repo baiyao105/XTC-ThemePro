@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/system/bin/sh
 # XTC-ThemePro V0.8.1
 # Module Protecter_Install
 # Customization script by XTC-ThemePro - @baiyao105
@@ -8,19 +8,18 @@ SKIPUNZIP=1
 export SKIPUNZIP=1
 
 # 获取配置值
-function get_config() {
-    local sundry_config="$TMPDIR/config.conf"
+get_config() {
+    sundry_config="$TMPDIR/config.conf"
     grep -E "^[^#].*=$1=" "$sundry_config" | cut -f2 -d '='
 }
 
 _grep_prop() {
-    local REGEX="s/$1=//p"
+    REGEX="s/$1=//p"
     shift
-    local FILES=("$@")    
-    if [[ ${#FILES[@]} -eq 0 ]]; then
-        FILES=("/system/build.prop" "/vendor/build.prop" "/product/build.prop")
+    if [ $# -eq 0 ]; then
+        set -- "/system/build.prop" "/vendor/build.prop" "/product/build.prop"
     fi
-    sed -n "$REGEX" "${FILES[@]}" 2>/dev/null | head -n 1
+    sed -n "$REGEX" "$@" 2>/dev/null | head -n 1
 }
 
 on_sundry() {
@@ -45,20 +44,20 @@ on_sundry() {
     chipid=$(getprop ro.boot.xtc.chipid)
     model=$(_grep_prop ro.product.innermodel)
     serverinner=$(getprop persist.sys.serverinner "${model}")
-    if [[ -z "$serverinner" ]]; then
+    if [ -z "$serverinner" ]; then
         serverinner="${model}"
     fi
-    if [[ -z "$chipid" ]]; then
+    if [ -z "$chipid" ]; then
         abort "Chipid获取失败"
     fi
-    Hwmac=$(cat /sys/class/net/wlan0/address)
+    Hwmac=$(cat /sys/class/net/wlan0/address 2>/dev/null || echo "unknown")
     input_string="${bindnumber}${serverinner}${chipid}${Hwmac}"
-    hash=$(echo -n "$input_string" | sha256sum | awk '{print $1}')
-    Ostring=${hash:0:8}
+    hash=$(printf "%s" "$input_string" | sha256sum | awk '{print $1}')
+    Ostring=$(echo "$hash" | cut -c1-8)
     log_enabled=$(get_config log)
     log_path=$(get_config log_path)
 
-    if [[ "$log_enabled" == "true" ]]; then
+    if [ "$log_enabled" = "true" ]; then
         Clog=1
         name=开发/测试者
         mkdir -p "${log_path}"
@@ -68,18 +67,22 @@ on_sundry() {
         set -x
     else
         Clog=0
-        name=同学
+        name=小杳喵
         Flog="/dev/null"
     fi
 
     HOUR=$(date +%H)
-    if [ $((10#$HOUR)) -ge 0 ] && [ $((10#$HOUR)) -lt 6 ]; then
+    # 移除前导零以避免八进制解释
+    HOUR_NUM=$(echo "$HOUR" | sed 's/^0*//')
+    # 如果为空则设为0
+    [ -z "$HOUR_NUM" ] && HOUR_NUM=0
+    if [ "$HOUR_NUM" -ge 0 ] && [ "$HOUR_NUM" -lt 6 ]; then
       period="凌晨"
-    elif [ $((10#$HOUR)) -ge 6 ] && [ $((10#$HOUR)) -lt 12 ]; then
+    elif [ "$HOUR_NUM" -ge 6 ] && [ "$HOUR_NUM" -lt 12 ]; then
       period="上午"
-    elif [ $((10#$HOUR)) -ge 12 ] && [ $((10#$HOUR)) -lt 17 ]; then
+    elif [ "$HOUR_NUM" -ge 12 ] && [ "$HOUR_NUM" -lt 17 ]; then
       period="下午"
-    elif [ $((10#$HOUR)) -ge 17 ] && [ $((10#$HOUR)) -lt 19 ]; then
+    elif [ "$HOUR_NUM" -ge 17 ] && [ "$HOUR_NUM" -lt 19 ]; then
       period="傍晚"
     else
       period="晚上"
@@ -118,13 +121,13 @@ module_validation(){
         ui_print "! 可能会出现非预期中的问题"
         abort "! 非标准环境"
     fi
-    if [[ "$KSU" == "true" ]]; then
+    if [ "$KSU" = "true" ]; then
       ui_print "- KernelSU 用户空间: $KSU_VER_CODE"
       ui_print "- KernelSU 内核空间: $KSU_KERNEL_VER_CODE"
       ui_print "- [KernelSU]蛤(＃°Д°)?"
     elif [ "$MAGISK_VER_CODE" -lt 23000 ];then
-        ui_print "! Magisk版本低于23.0: $MAGISK_VER_CODE，安装终止。" 
-        abort "!  Magisk版本低于23.0" 
+        ui_print "! Magisk版本低于23.0: $MAGISK_VER_CODE，安装终止。"
+        abort "!  Magisk版本低于23.0"
     else
         ui_print " - Magisk版本: $MAGISK_VER ($MAGISK_VER_CODE)"
     fi
@@ -149,7 +152,7 @@ sundry_shell(){
     ui_print "- 清除缓余文件"
     am force-stop com.xtc.theme
     rm -rf /sdcard/xtc/themepackage
-    rm -r /data/user/0/com.xtc.xws
+    rm -rf /data/user/0/com.xtc.xws 2>/dev/null || true
     pm clear com.xtc.theme
     am force-stop com.xtc.theme
     ui_print "- 替换数据库"
@@ -158,8 +161,8 @@ sundry_shell(){
     rm -rf "${theme_db}/theme_package.db"
     cp -af "${TMPDIR}/theme_package.db" "${theme_db}/theme_package.db"
     cp "${TMPDIR}/personality_charge.db" "${theme_db}/personality_charge.db"
-    set_perm_recursive ${theme_db} 0 0 0755 0400 || true
-    chmod 700 ${theme_db}/*
+    set_perm_recursive "${theme_db}" 0 0 0755 0400 || true
+    chmod 700 "${theme_db}"/*
     echo "*/60 * * * * ${MODPATH}/Sundry/pre_execute.sh && ${MODPATH}/Sundry/rewritedb.sh" >"${MODPATH}/root"
     ui_print "- 释放文件"
     ui_print "- 过程比较久,请稍等一小会(≧﹏≦)"
@@ -171,19 +174,21 @@ sundry_shell(){
     unzip -j -o "${ZIPFILE}" 'files/*' -d "${MODPATH}" >&2 || abort "解压数据库时出错"
     unzip -j -o "${ZIPFILE}" 'common/post-fs-data.sh' -d "${MODPATH}" >&2 || abort "解压脚本时出错"
     unzip -j -o "${ZIPFILE}" 'uninstall.sh' -d "${MODPATH}" >&2 || abort "解压脚本时出错"
-    unzip -j -o "${ZIPFILE}" 'system/*' -d "${MODPATH}"/system >&2 || abort "解压挂载文件出错"
-    unzip -j -o "${ZIPFILE}" 'Sundry/*' -d "${MODPATH}"/Sundry >&2 || abort "解压挂载文件出错"
+    unzip -o "${ZIPFILE}" 'system/*' -d "${MODPATH}" >&2 || abort "解压挂载文件出错"
+    unzip -o "${ZIPFILE}" 'Sundry/*' -d "${MODPATH}" >&2 || abort "解压挂载文件出错"
     [ -f "${MODPATH}/module.prop" ] || abort "module.prop 文件未能成功解压"
     ui_print "- 安装好啦ヾ(≧▽≦*)o"
 }
 set_permissions() {
   chmod +x "${MODPATH}/Sundry/rewritedb.sh"
-  chmod +x "${MODPATH}/system/bin/themepro.sh"
-  set_perm_recursive  "${MODPATH}"  0  0  0755  0644
+  chmod +x "${MODPATH}/files/themepro.sh"
+  chmod +x "${MODPATH}/system/bin/themepro"
+  set_perm_recursive "${MODPATH}" 0 0 0755 0644
 }
 
 # 主执行流程
+on_sundry
 print_modname
 module_validation
-on_sundry
 sundry_shell
+set_permissions
