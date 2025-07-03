@@ -1,5 +1,4 @@
 #!/bin/sh
-chmod 755 /data/user/0/com.xtc.theme
 rm -rf /data/user/0/com.xtc.theme
 rm -rf /data/user/0/com.xtc.xws
 rm -rf /sdcard/Android/baiyao105/XTC-ThemePro

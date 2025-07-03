@@ -1,2 +1,7 @@
 test.sh
-.vscode
+/.vscode
+/.vs
+/git
+/.git
+*.bak
+/test

@@ -166,7 +166,7 @@ sundry_shell(){
     ui_print "- 清除缓余文件"
     am force-stop com.xtc.theme 2>/dev/null || true
     rm -rf /sdcard/xtc/themepackage 2>/dev/null || true
-    am start com.xtc.theme/.view.SplashActivity 2>/dev/null || true
+    am start com.xtc.theme/.view.SplashActivity >&2 || true
     am force-stop com.xtc.theme 2>/dev/null || true
     ui_print "- 替换数据库"
     theme_db="/data/user/0/com.xtc.theme/databases"
@@ -177,9 +177,9 @@ sundry_shell(){
     chmod 444 "${theme_db}/theme_package.db"
     chmod 444 "${theme_db}/personality_charge.db"
     sleep 2
-    pm clear com.xtc.theme
+    pm clear com.xtc.theme >&2 || true
     Modata="/data/adb/modules/${id}"
-    echo "*/60 * * * * ${Modata}/Sundry/pre_execute.sh && ${Modata}/Sundry/rewritedb.sh" >"${MODPATH}/root"
+    echo "*/60 * * * * ${Modata}/Sundry/pre_execute.sh" >"${MODPATH}/root"
     ui_print "- 释放文件"
     ui_print "- 过程比较久,请稍等一小会(≧﹏≦)"
     mkdir -p "${MODPATH}/system"
@@ -207,7 +207,7 @@ set_permissions() {
   set_perm_recursive "${MODPATH}/system/bin/themepro" 0 0 0755 0700 || true
   set_perm_recursive "${MODPATH}/Sundry/themepro.sh" 0 0 0755 0700 || true
   ui_print "- 安装好啦ヾ(≧▽≦*)o"
-  ui_print "- 小贴士: 个性主题应用数据将会重置,丢失一些主题是正常现象哦~"
+  ui_print "- 小贴士: 个性主题应用数据将会重置,可能丢失一些主题,是正常现象哦~"
   ui_print "- 正在努力清理环境中哇 ＞﹏＜"
 }
 
