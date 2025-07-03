@@ -55,9 +55,9 @@ getdevice() {
     echo "设备标识: ${Ostring}"
     echo "Crontab时间: ${crontab_time}"
     echo "模块版本: ${module_version} (${module_code})"
-    echo "主题应用版本: ${max_versionName} (${max_version})"
+    echo "个性主题版本: ${max_versionName} (${max_version})"
     if [ -n "$factory_version" ] && [ "$factory_version" != "$max_version" ]; then
-        echo "出厂主题版本: ${factory_versionName} (${factory_version})"
+        echo "个性主题版本(系统内置): ${factory_versionName} (${factory_version})"
     fi
     echo "日志配置: 启用=${log_enabled:-false}, 路径=${log_path:-未设置}"
     echo "================================================================="

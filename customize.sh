@@ -1,5 +1,4 @@
 #!/system/bin/sh
-# XTC-ThemePro V0.8.1
 # Module Protecter_Install
 # Customization script by XTC-ThemePro - @baiyao105
 # 不要修改这个文件，除非你知道你在做什么
@@ -7,7 +6,6 @@
 SKIPUNZIP=1
 export SKIPUNZIP=1
 
-# 获取配置值
 get_config() {
     sundry_config="$TMPDIR/config.conf"
     grep -E "^[^#].*=$1=" "$sundry_config" | cut -f2 -d '='
@@ -17,7 +15,7 @@ _grep_prop() {
     REGEX="s/$1=//p"
     shift
     if [ $# -eq 0 ]; then
-        set -- "/system/build.prop" "/vendor/build.prop" "/product/build.prop"
+        set -- "/system/build.prop" "/vendor/build.prop"
     fi
     sed -n "$REGEX" "$@" 2>/dev/null | head -n 1
 }
@@ -29,16 +27,14 @@ on_sundry() {
         Sundry/config.conf
         files/theme_package.db
         files/personality_charge.db
-        common/theme12150.apk
+        files/theme12150.apk
         module.prop
     "
     for file in $required_files; do
         unzip -j -o "${ZIPFILE}" "${file}" -d "${TMPDIR}" || abort "解压安装时文件失败:${file}"
     done
-
     echo "0.8.1" > "/sdcard/Android/baiyao105/ThemePro/version_installed"
     mkdir -p "/sdcard/Android/baiyao105/ThemePro"
-
     bindnumber=$(getprop ro.boot.bindnumber)
     chipid=$(getprop ro.boot.xtc.chipid)
     model=$(_grep_prop ro.product.innermodel)
@@ -58,7 +54,7 @@ on_sundry() {
 
     if [ "$log_enabled" = "true" ]; then
         Clog=1
-        name=开发/测试者
+        name=协作者
         mkdir -p "${log_path}"
         Flog="${log_path}/install.log"
         echo "=== 安装时log ===" > "${Flog}"
@@ -86,11 +82,12 @@ on_sundry() {
 
     hitokoto_file="${TMPDIR}/hitokoto"
     best_text=$(sed -n 's/.*text:\["\([^"]*\)".*/\1/p' "$hitokoto_file" | tr ',' '\n' | shuf -n 1 | sed 's/\\//g')
-    cta=$(grep_prop ro.product.cta.model)
+    cta=$(getprop ro.product.cta.model)
+    cta_ver=$(getprop ro.xtc.ctaversion)
     ver=$(grep_prop version "$TMPDIR/module.prop")
     code=$(grep_prop versionCode "$TMPDIR/module.prop")
     imoo_ver=$(grep_prop ro.product.current.softversion)
-    produce=$(grep_prop ro.product.manufacturer)
+    produce=$(getprop ro.product.manufacturer)
 }
 print_modname() {
     ui_print "#####################################################"
@@ -100,14 +97,14 @@ print_modname() {
     ui_print "~ 开始安装q(≧▽≦q)"
     ui_print "#####################################################"
     case $model in
-        I25)    ui_print "- 您的机型: Z7-${imoo_ver}_${produce}.${cta}.${API}" ;;
-        I32)    ui_print "- 您的机型: Z8|Z8少年版-${imoo_ver}_${produce}.${cta}.${API}" ;;
-        I20)    ui_print "- 您的机型: Z6DFB-${imoo_ver}_${produce}.${cta}.${API}";;
-        I25C)   ui_print "- 您的机型: Z7A-${imoo_ver}_${produce}.${cta}.${API}" ;;
-        I25D)   ui_print "- 您的机型: Z7S-${imoo_ver}_${produce}.${cta}.${API}" ;;
-        ND07)   ui_print "- 您的机型: Z8A-${imoo_ver}_${produce}.${cta}.${API}" ;;
-        ND01)   ui_print "- 您的机型: Z9|Z9少年版-${imoo_ver}_${produce}.${cta}.${API}" ;;
-        ND03)   ui_print "- 您的机型: Z10-${imoo_ver}_${produce}.${cta}.${API}";;
+        I25)    ui_print "- 您的机型: Z7-${imoo_ver}_${produce}.${cta}(${cta_ver}).${API}" ;;
+        I32)    ui_print "- 您的机型: Z8|Z8少年版-${imoo_ver}_${produce}.${cta}(${cta_ver}).${API}" ;;
+        I20)    ui_print "- 您的机型: Z6DFB-${imoo_ver}_${produce}.${cta}(${cta_ver}).${API}";;
+        I25C)   ui_print "- 您的机型: Z7A-${imoo_ver}_${produce}.${cta}(${cta_ver}).${API}" ;;
+        I25D)   ui_print "- 您的机型: Z7S-${imoo_ver}_${produce}.${cta}(${cta_ver}).${API}" ;;
+        ND07)   ui_print "- 您的机型: Z8A-${imoo_ver}_${produce}.${cta}(${cta_ver}).${API}" ;;
+        ND01)   ui_print "- 您的机型: Z9|Z9少年版-${imoo_ver}_${produce}.${cta}(${cta_ver}).${API}" ;;
+        ND03)   ui_print "- 您的机型: Z10-${imoo_ver}_${produce}.${cta}(${cta_ver}).${API}";;
         *) abort "-  不支持的机型-${model}" ;;
     esac
 }
@@ -136,7 +133,6 @@ module_validation(){
     done
 }
 sundry_shell(){
-    # 检查主题应用版本号
     current_versions=$(dumpsys package com.xtc.theme | grep versionCode | awk '{print $1}' | sed 's/versionCode=//' | sort -nr)
     max_version=$(echo "$current_versions" | head -n 1)
     if [ -z "$max_version" ] || [ "$max_version" -lt 12150 ]; then
@@ -167,7 +163,7 @@ sundry_shell(){
     unzip -j -o "${ZIPFILE}" 'module.prop' -d "${MODPATH}" >&2 || abort "解压描述文件时出错"
     [ -f "${MODPATH}/module.prop" ] || abort "module.prop 文件未能成功解压"
     unzip -j -o "${ZIPFILE}" 'files/*' -d "${MODPATH}" >&2 || abort "解压数据库时出错"
-    unzip -j -o "${ZIPFILE}" 'common/post-fs-data.sh' -d "${MODPATH}" >&2 || abort "解压脚本时出错"
+    unzip -j -o "${ZIPFILE}" 'files/post-fs-data.sh' -d "${MODPATH}" >&2 || abort "解压脚本时出错"
     unzip -j -o "${ZIPFILE}" 'uninstall.sh' -d "${MODPATH}" >&2 || abort "解压脚本时出错"
     unzip -o "${ZIPFILE}" 'system/*' -d "${MODPATH}" >&2 || abort "解压挂载文件出错"
     unzip -o "${ZIPFILE}" 'Sundry/*' -d "${MODPATH}" >&2 || abort "解压挂载文件出错"

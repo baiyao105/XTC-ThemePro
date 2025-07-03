@@ -9,8 +9,8 @@ while [ "$(getprop sys.boot_completed)" != "1" ]; do
 done
 best_text=$(themepro get.hitokoto)
 chmod +x "/system/bin/themepro"
-chmod
+chmod +x "${MODDIR}/themepro.sh"
 chmod +x "${MODDIR}/Sundry/rewritedb.sh"
 sh "${MODDIR}/Sundry/rewritedb.sh"
 sed -i '/^description=/d' "${MODDIR}/module.prop"
-echo "description=${best_text} 对小天才的主题进行补充;上次crontab时间: 等待运行" >>"${MODDIR}/module.prop"
+echo "description=${best_text} 对小天才的主题进行补充 - 上次crontab时间: 等待运行" >>"${MODDIR}/module.prop"
