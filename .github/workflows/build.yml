@@ -1,0 +1,154 @@
+name: Build and Release
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (optional)'
+        required: false
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set environment variables
+      id: env_setup
+      run: |
+        # Check if this is a release build
+        RELEASE_VERSION=""
+        IS_RELEASE="false"
+        if [[ "${{ github.event.inputs.version }}" != "" ]]; then
+          RELEASE_VERSION="${{ github.event.inputs.version }}"
+          IS_RELEASE="true"
+        elif [[ "${{ github.event.head_commit.message }}" == *"release"* ]] || [[ "${{ github.event.head_commit.message }}" == *"Release"* ]]; then
+          RELEASE_VERSION=$(echo "${{ github.event.head_commit.message }}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+          if [[ "$RELEASE_VERSION" != "" ]]; then
+            IS_RELEASE="true"
+          fi
+        fi
+        # Set default version for non-release builds
+        if [[ "$IS_RELEASE" == "false" ]]; then
+          RELEASE_VERSION="dev-$(date +%Y%m%d-%H%M%S)"
+        fi
+        ZIP_FILENAME="XTC-ThemePro_${RELEASE_VERSION}.zip"
+        echo "IS_RELEASE=${IS_RELEASE}" >> $GITHUB_ENV
+        echo "RELEASE_VERSION=${RELEASE_VERSION}" >> $GITHUB_ENV
+        echo "ZIP_FILENAME=${ZIP_FILENAME}" >> $GITHUB_ENV
+        echo "is_release=${IS_RELEASE}" >> $GITHUB_OUTPUT
+        echo "release_version=${RELEASE_VERSION}" >> $GITHUB_OUTPUT
+        echo "zip_filename=${ZIP_FILENAME}" >> $GITHUB_OUTPUT
+        echo "构建版本: ${RELEASE_VERSION}"
+        echo "是否发布: ${IS_RELEASE}"
+
+    - name: Package module
+      run: |
+        mkdir -p build
+        cp -r Sundry build/
+        cp -r files build/
+        cp -r system build/
+        cp -r META-INF build/
+        cp customize.sh build/
+        cp module.prop build/
+        cp uninstall.sh build/
+        cp update.json build/
+        cp README.md build/
+
+        find build/ -name ".DS_Store" -delete 2>/dev/null || true
+        find build/ -name "Thumbs.db" -delete 2>/dev/null || true
+        find build/ -name "*.bak" -delete 2>/dev/null || true
+        find build/ -name "*.tmp" -delete 2>/dev/null || true
+        find build/ -name "*.log" -delete 2>/dev/null || true
+         if [[ "${{ env.IS_RELEASE }}" == "true" ]]; then
+           echo "正在更新版本信息到 ${{ env.RELEASE_VERSION }}..."
+           # Update module.prop
+           sed -i "s/^version=.*/version=${{ env.RELEASE_VERSION }}/" build/module.prop
+
+           # Update update.json
+           sed -i "s/\"version\": \".*\"/\"version\": \"${{ env.RELEASE_VERSION }}\"/" build/update.json
+           sed -i "s/download\/[0-9\.]*/download\/${{ env.RELEASE_VERSION }}/" build/update.json
+           sed -i "s/XTC-ThemePro_[0-9\.]*\.zip/XTC-ThemePro_${{ env.RELEASE_VERSION }}.zip/" build/update.json
+         fi
+
+         # Package with maximum compression
+         cd build
+         zip -9 -r "../${{ env.ZIP_FILENAME }}" .
+         cd ..
+
+         echo "打包完成: ${{ env.ZIP_FILENAME }}"
+         echo "文件大小: $(du -h "${{ env.ZIP_FILENAME }}" | cut -f1)"
+
+    - name: Generate changelog
+      if: env.IS_RELEASE == 'true'
+      run: |
+        LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+        # Create formatted changelog
+        cat > CHANGELOG.md << EOF
+        # 🎉 新版本
+        ## 📋 版本信息
+        - **版本**: ${{ env.RELEASE_VERSION }}
+        - **发布日期**: $(date '+%Y-%m-%d %H:%M:%S UTC')
+        - **构建**: GitHub Actions
+        ## 📝 更新内容
+        EOF
+        if [[ "$LATEST_TAG" != "" ]]; then
+          echo "### 🔄 自 $LATEST_TAG 以来的变更" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          git log ${LATEST_TAG}..HEAD --pretty=format:"- %s (%h)" --no-merges | grep -v "Release:" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          COMMIT_COUNT=$(git rev-list --count ${LATEST_TAG}..HEAD)
+          FILES_CHANGED=$(git diff --name-only ${LATEST_TAG}..HEAD | wc -l)
+          echo "### 📊 统计信息" >> CHANGELOG.md
+          echo "- **提交数量**: ${COMMIT_COUNT}" >> CHANGELOG.md
+          echo "- **文件变更**: ${FILES_CHANGED}" >> CHANGELOG.md
+        else
+          echo "### 🎊 首次发布" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "这是 XTC-ThemePro 的首次发布！" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "#### ✨ 功能特性" >> CHANGELOG.md
+          git log --pretty=format:"- %s (%h)" --no-merges | head -20 | grep -v "Release:" >> CHANGELOG.md
+        fi
+
+        cat >> CHANGELOG.md << EOF
+        ---
+        💝 **感谢使用喵**
+        EOF
+
+        echo "📄 生成的更新日志:"
+         cat CHANGELOG.md
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: XTC-ThemePro-${{ env.RELEASE_VERSION }}
+        path: |
+            ${{ env.ZIP_FILENAME }}
+            README.md
+
+    - name: Create release
+      if: env.IS_RELEASE == 'true'
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ env.RELEASE_VERSION }}
+        name: 🎨 XTC-ThemePro v${{ env.RELEASE_VERSION }}
+        body_path: CHANGELOG.md
+        draft: false
+        prerelease: false
+        files: |
+          ${{ env.ZIP_FILENAME }}
+          CHANGELOG.md
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
