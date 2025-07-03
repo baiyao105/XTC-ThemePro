@@ -9,5 +9,4 @@ if [ -z "$1" ]; then
     sh "$SCRIPT_PATH" "getdevice"
     exit 1
 fi
-
 sh "$SCRIPT_PATH" "$@"

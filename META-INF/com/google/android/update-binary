@@ -17,9 +17,10 @@ ui_print() { echo "$1"; }
 
 require_new_magisk() {
   ui_print "***********************************"
-  ui_print "  magisk版本为: $MAGISK_VER_CODE"
-  ui_print "       请尝试修复运行环境   "
-  ui_print "  Developed by baiyao105 "
+  ui_print "Magisk版本为: $MAGISK_VER_CODE"
+  ui_print "请尝试修复运行环境"
+  ui_print "Developed by baiyao105"
+  ui_print "呜呜呜,代码咬我了啊……"
   ui_print "***********************************"
   exit 1
 }
@@ -33,8 +34,9 @@ print_modname() {
   len=$(echo -n "$MODNAME" | wc -c)
   len=$((len + 2))
   pounds=$(printf "%${len}s" | tr ' ' '*')
-  ui_print "  Developed by baiyao105  "
-  ui_print "*******************"
+  ui_print "Developed by baiyao105"
+  ui_print "呜呜呜,代码咬我了啊……"
+  ui_print "*************************"
 }
 
 ##############
@@ -113,7 +115,6 @@ if is_legacy_script; then
   # service scripts
   $LATESTARTSERVICE && cp -af $TMPDIR/service.sh $MODPATH/service.sh
 
-  ui_print "- 设置权限..."
   set_permissions
 else
   print_modname
@@ -162,8 +163,9 @@ $MODPATH/README.md $MODPATH/.git* 2>/dev/null
 ##############
 
 cd /
+ui_print "- 正在努力清理环境中哇"
 $BOOTMODE || recovery_cleanup
 rm -rf $TMPDIR
 
-ui_print "- 完成"
+ui_print "- 咕…完成了喵~"
 exit 0

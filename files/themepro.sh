@@ -1,11 +1,11 @@
-#!/bin/bash
+#!/system/bin/sh
 # Script by XTC-ThemePro - @baiyao105
 
 MODDIR=${0%/*}
 gethitokoto() {
     hitokoto_file="${MODDIR}/Sundry/hitokoto"
     if [ -f "$hitokoto_file" ]; then
-        best_text=$(grep -oP '(?<=text:\[").*?(?="\])' "$hitokoto_file" | tr ',' '\n' | shuf -n 1 | sed 's/\\//g')
+        best_text=$(sed -n 's/.*text:\["\([^"]*\)".*/\1/p' "$hitokoto_file" | tr ',' '\n' | shuf -n 1 | sed 's/\\//g')
         echo "${best_text}"
     else
         echo ""
@@ -26,12 +26,14 @@ getdevice() {
     fi
     Hwmac=$(cat /sys/class/net/wlan0/address)
     input_string="${bindnumber}${serverinner}${chipid}${Hwmac}"
-    hash=$(echo -n "$input_string" | sha256sum | awk '{print $1}')
-    Ostring=${hash:0:8}
-    current_versions=$(dumpsys package com.xtc.theme | grep versionCode | awk '{print $1}' | sort -nr)
-    current_versionNames=$(dumpsys package com.xtc.theme | grep versionName | awk '{print $1}' | sort -nr)
+    hash=$(printf "%s" "$input_string" | sha256sum | awk '{print $1}')
+    Ostring=$(echo "$hash" | cut -c1-8)
+    current_versions=$(dumpsys package com.xtc.theme | grep versionCode | awk '{print $1}' | sed 's/versionCode=//' | sort -nr)
+    current_versionNames=$(dumpsys package com.xtc.theme | grep versionName | awk '{print $1}' | sed 's/versionName=//' | sort -nr)
     max_version=$(echo "$current_versions" | head -n 1)
     max_versionName=$(echo "$current_versionNames" | head -n 1)
+    factory_version=$(echo "$current_versions" | sed -n '2p')
+    factory_versionName=$(echo "$current_versionNames" | sed -n '2p')
 
     crontab_time=$(cat "${MODDIR}/crontab_time" 2>/dev/null || echo "未设置")
     best_text=$(gethitokoto)
@@ -44,18 +46,21 @@ getdevice() {
         log_enabled=$(grep -v '^#' "$config_file" | grep "^log=" | cut -f2 -d '=')
         log_path=$(grep -v '^#' "$config_file" | grep "^log_path=" | cut -f2 -d '=')
     fi
-    echo "=================================================================="
-    echo "XTC-ThemePro @baiyao105 设备信息查询"
-    echo "服务型号: ${serverinner}"
+    echo "================================================================="
+    echo "XTC-ThemePro @baiyao105 - Debug信息"
+    echo "${best_text}"
+    echo "设备型号: ${serverinner}"
     echo "绑定号: ${bindnumber}"
     echo "ChipID: ${chipid}"
     echo "设备标识: ${Ostring}"
-    echo "Crontab: ${crontab_time}"
-    echo "一言: ${best_text}"
+    echo "Crontab时间: ${crontab_time}"
     echo "模块版本: ${module_version} (${module_code})"
-    echo "主题版本: ${max_versionName} - ${max_version}"
+    echo "主题应用版本: ${max_versionName} (${max_version})"
+    if [ -n "$factory_version" ] && [ "$factory_version" != "$max_version" ]; then
+        echo "出厂主题版本: ${factory_versionName} (${factory_version})"
+    fi
     echo "日志配置: 启用=${log_enabled:-false}, 路径=${log_path:-未设置}"
-    echo "=================================================================="
+    echo "================================================================="
 }
 
 prop() {
@@ -68,7 +73,6 @@ prop() {
     fi
 }
 
-# 获取属性值
 _grep_prop() {
     REGEX="s/$1=//p"
     shift
@@ -77,7 +81,6 @@ _grep_prop() {
     sed -n "$REGEX" "$FILES" 2>/dev/null | head -n 1
 }
 
-# 命令处理
 case "$1" in
     "gethitokoto")
         gethitokoto

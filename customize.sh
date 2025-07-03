@@ -24,7 +24,6 @@ _grep_prop() {
 
 on_sundry() {
     ui_print "- 正在解压临时文件(*>﹏<*)"
-    # 必需的文件列表
     required_files="
         Sundry/hitokoto
         Sundry/config.conf
@@ -37,7 +36,7 @@ on_sundry() {
         unzip -j -o "${ZIPFILE}" "${file}" -d "${TMPDIR}" || abort "解压安装时文件失败:${file}"
     done
 
-    echo "0.8.1" > "/sdcard/Android/baiyao105/ThemePro"
+    echo "0.8.1" > "/sdcard/Android/baiyao105/ThemePro/version_installed"
     mkdir -p "/sdcard/Android/baiyao105/ThemePro"
 
     bindnumber=$(getprop ro.boot.bindnumber)
@@ -70,11 +69,8 @@ on_sundry() {
         name=小杳喵
         Flog="/dev/null"
     fi
-
     HOUR=$(date +%H)
-    # 移除前导零以避免八进制解释
     HOUR_NUM=$(echo "$HOUR" | sed 's/^0*//')
-    # 如果为空则设为0
     [ -z "$HOUR_NUM" ] && HOUR_NUM=0
     if [ "$HOUR_NUM" -ge 0 ] && [ "$HOUR_NUM" -lt 6 ]; then
       period="凌晨"
@@ -89,7 +85,7 @@ on_sundry() {
     fi
 
     hitokoto_file="${TMPDIR}/hitokoto"
-    best_text=$(grep -oP '(?<=text:\[").*?(?="\])' "$hitokoto_file" | tr ',' '\n' | shuf -n 1 | sed 's/\\//g')
+    best_text=$(sed -n 's/.*text:\["\([^"]*\)".*/\1/p' "$hitokoto_file" | tr ',' '\n' | shuf -n 1 | sed 's/\\//g')
     cta=$(grep_prop ro.product.cta.model)
     ver=$(grep_prop version "$TMPDIR/module.prop")
     code=$(grep_prop versionCode "$TMPDIR/module.prop")
@@ -141,7 +137,7 @@ module_validation(){
 }
 sundry_shell(){
     # 检查主题应用版本号
-    current_versions=$(dumpsys package com.xtc.theme | grep versionCode | awk '{print $1}' | sort -nr)
+    current_versions=$(dumpsys package com.xtc.theme | grep versionCode | awk '{print $1}' | sed 's/versionCode=//' | sort -nr)
     max_version=$(echo "$current_versions" | head -n 1)
     if [ -z "$max_version" ] || [ "$max_version" -lt 12150 ]; then
         ui_print "- 个性主题版本过低(${max_version:-无}),正在覆盖升级"
@@ -168,7 +164,6 @@ sundry_shell(){
     ui_print "- 过程比较久,请稍等一小会(≧﹏≦)"
     mkdir -p "${MODPATH}/system"
     mkdir -p "${MODPATH}/Sundry"
-    # 确保先解压module.prop文件
     unzip -j -o "${ZIPFILE}" 'module.prop' -d "${MODPATH}" >&2 || abort "解压描述文件时出错"
     [ -f "${MODPATH}/module.prop" ] || abort "module.prop 文件未能成功解压"
     unzip -j -o "${ZIPFILE}" 'files/*' -d "${MODPATH}" >&2 || abort "解压数据库时出错"
@@ -186,7 +181,7 @@ set_permissions() {
   set_perm_recursive "${MODPATH}" 0 0 0755 0644
 }
 
-# 主执行流程
+
 on_sundry
 print_modname
 module_validation
