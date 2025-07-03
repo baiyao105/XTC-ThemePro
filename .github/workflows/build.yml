@@ -15,6 +15,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
 
     steps:
     - name: Checkout code
@@ -140,7 +143,7 @@ jobs:
     - name: Create release
       if: env.IS_RELEASE == 'true'
       id: create_release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: v${{ env.RELEASE_VERSION }}
         name: 🎨 XTC-ThemePro v${{ env.RELEASE_VERSION }}
@@ -150,5 +153,7 @@ jobs:
         files: |
           ${{ env.ZIP_FILENAME }}
           CHANGELOG.md
+        fail_on_unmatched_files: true
+        generate_release_notes: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
