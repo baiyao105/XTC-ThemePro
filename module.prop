@@ -1,7 +1,7 @@
 id=XTC-ThemePro
-name=小天才ThemePro
+name=ThemePro(alltheme)
 author=白杳
 version=3.0.11
 versionCode=30110
 description=🌟 轻松为主题补充新元素
-updateJson=https://gh-proxy.com/github.com/baiyao105/XTC-ThemePro/update.json
+updateJson=https://gh-proxy.com/raw.githubusercontent.com/baiyao105/XTC-ThemePro/refs/heads/main/update.json
