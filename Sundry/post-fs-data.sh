@@ -20,6 +20,6 @@ best_text=$(themepro gethitokoto)
 chmod +x "/system/bin/themepro"
 chmod +x "${MODDIR}/themepro.sh"
 chmod +x "${MODDIR}/Sundry/rewritedb.sh"
-sh "${MODDIR}/Sundry/rewritedb.sh"
+pm clear com.xtc.theme
 sed -i '/^description=/d' "${MODDIR}/module.prop"
-echo "description=🌸 为主题加点新花样 - ●${best_text} - 上次crontab时间: 等待运行" >> "${MODDIR}/module.prop"
+echo "description=🌸 为主题加点新花样 - ●${best_text}" >> "${MODDIR}/module.prop"

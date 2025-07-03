@@ -4,4 +4,4 @@ MODPATH=$(cd "$(dirname "$0")/.." && pwd)
 date +"%H:%M:%S" > "${MODPATH}/crontab_time"
 best_text=$(themepro gethitokoto)
 sed -i '/^description=/d' "${MODPATH}/module.prop"
-echo "description=🌸 为主题加点新花样 - ●${best_text} - 上次crontab时间: $(cat "${MODPATH}/crontab_time")" >> "${MODPATH}/module.prop"
+echo "description=🌸 为主题加点新花样 - ●${best_text}" >> "${MODPATH}/module.prop"
