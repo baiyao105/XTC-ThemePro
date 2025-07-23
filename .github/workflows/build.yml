@@ -57,6 +57,8 @@ jobs:
     - name: Package module
       run: |
         mkdir -p build
+        mkdir -p build/docs/img
+        cp -r docs/img/favicon.png build/docs/img
         cp -r Sundry build/
         cp -r files build/
         cp -r system build/
