@@ -13,13 +13,15 @@
 </div>
 <div align="center">
   <a href="https://github.com/baiyao105/XTC-ThemePro/releases">
-    <img src="https://img.shields.io/github/v/release/baiyao105/XTC-ThemePro?style=for-the-badge&color=purple&label=当前版本" alt="GitHub release">
+    <img src="https://img.shields.io/github/v/release/baiyao105/XTC-ThemePro?style=for-the-badge&color=purple&label=%E5%BD%93%E5%89%8D%E7%89%88%E6%9C%AC" alt="GitHub release">
   </a>
+
   <a href="https://github.com/baiyao105/XTC-ThemePro/releases">
     <img src="https://img.shields.io/github/downloads/baiyao105/XTC-ThemePro/total?color=blue&style=for-the-badge" alt="GitHub downloads">
   </a>
+
   <a href="https://github.com/baiyao105/XTC-ThemePro/stargazers">
-    <img src="https://img.shields.io/github/stars/baiyao105/XTC-ThemePro?style=for-the-badge&color=orange&label=星标" alt="GitHub stars">
+    <img src="https://img.shields.io/github/stars/baiyao105/XTC-ThemePro?style=for-the-badge&color=orange&label=%E6%98%9F%E6%A0%87" alt="GitHub stars">
   </a>
 
 </div>
