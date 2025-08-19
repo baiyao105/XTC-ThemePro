@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
       actions: read
 
     steps:
@@ -54,8 +55,12 @@ jobs:
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           echo "[DEBUG] Creating tag: $VERSION"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -f "$VERSION" -m "Release $VERSION"
           git push origin "$VERSION" --force
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup git-cliff
         uses: kenji-miyake/setup-git-cliff@v2
