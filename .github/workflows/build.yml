@@ -3,12 +3,12 @@ name: Publish
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
   workflow_dispatch:
     inputs:
       version:
-        description: '发布版本号 (例如: v3.0.1.3)'
+        description: "发布版本号 (例如: v3.0.1.3)"
         required: false
         type: string
 
@@ -83,14 +83,14 @@ jobs:
       - name: Commit version updates
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: | 
+          commit_message: |
             Publish: version ${{ steps.version.outputs.version }}
 
             Co-authored-by: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          commit_options: '--signoff'
-          commit_user_name: 'ChimeYao-bot'
-          commit_user_email: 'ChimeYao@outlook.jp'
-          commit_author: 'ChimeYao-bot <ChimeYao@outlook.jp>'
+          commit_options: "--signoff"
+          commit_user_name: "ChimeYao-bot"
+          commit_user_email: "ChimeYao@outlook.jp"
+          commit_author: "ChimeYao-bot <ChimeYao@outlook.jp>"
           file_pattern: "module.prop update.json"
 
       - name: Build Magisk module

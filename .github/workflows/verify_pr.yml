@@ -1,0 +1,93 @@
+name: Verify-PR
+
+on:
+  pull_request_target:
+    types: [opened, edited]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  branch-check:
+    name: Validate branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get branch-name
+        uses: tj-actions/branch-names@v9
+        id: branch
+
+      - name: Find branch-tip
+        if: steps.branch.outputs.head_ref_branch == 'main'
+        uses: peter-evans/find-comment@v3
+        id: find-branch-comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "github-actions[bot]"
+          body-includes: "您的 PR 来自`main`分支"
+
+      - name: Comment Tip from branch
+        if: steps.branch.outputs.head_ref_branch == 'main' && steps.find-branch-comment.outputs.comment-id == ''
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ### ⚠️ @${{ github.event.pull_request.user.login }} **嘿~您的 PR 来自`main`分支 !**
+
+            > [!WARNING]
+            >  **在 `main` 分支提交的内容可能被强制覆盖, 先开一个功能分支再提交吧 ✨**
+            >
+            >> 📄[__*分支命名最佳实践参考*__](https://dev.to/jps27cse/github-branching-name-best-practices-49ei)
+
+      - name: Validate title
+        id: semantic-check
+        uses: amannn/action-semantic-pull-request@v6
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Find title-tip
+        uses: peter-evans/find-comment@v3
+        id: find-title-comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: "github-actions[bot]"
+          body-includes: "PR 标题格式不规范"
+
+      - name: Comment Tip from title
+        if: steps.semantic-check.outcome == 'failure' && steps.find-title-comment.outputs.comment-id == ''
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ### @${{ github.event.pull_request.user.login }} **PR 标题格式不规范！**
+
+            > [!TIP]
+            > **您的 PR 标题不符合 Conventional Commits 规范✨**
+            >
+            >> 📄[__*语义化提交规范参考*__](https://www.conventionalcommits.org/)
+
+      - name: Delete resolved title comment
+        if: steps.semantic-check.outcome == 'success' && steps.find-title-comment.outputs.comment-id != ''
+        uses: detomarco/delete-comment@main
+        with:
+          comment-id: ${{ steps.find-title-comment.outputs.comment-id }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add label
+        if: steps.semantic-check.outcome == 'failure' || steps.branch.outputs.head_ref_branch == 'main'
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: invalid
+
+      - name: Fail job if checks failed
+        if: steps.branch.outputs.head_ref_branch == 'main' || steps.semantic-check.outcome == 'failure'
+        run: |
+          if [[ "${{ steps.branch.outputs.head_ref_branch }}" == "main" ]]; then
+            echo "- 分支检查失败: PR 来自 main 分支"
+          fi
+          if [[ "${{ steps.semantic-check.outcome }}" == "failure" ]]; then
+            echo "- 标题检查失败: PR 标题格式不规范"
+          fi
+          exit 1
