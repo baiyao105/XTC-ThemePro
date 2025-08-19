@@ -25,9 +25,8 @@ on_sundry() {
     required_files="
         Sundry/hitokoto
         Sundry/config.conf
-        files/theme_package.db
         files/personality_charge.db
-        files/theme12150.apk
+        files/theme.apk
         module.prop
     "
     for file in $required_files; do
@@ -116,7 +115,8 @@ print_modname() {
         I25D)   ui_print "- 您的机型: Z7S-${imoo_ver}_${produce}.${cta}(${cta_ver}).${API}" ;;
         ND07)   ui_print "- 您的机型: Z8A-${imoo_ver}_${produce}.${cta}(${cta_ver}).${API}" ;;
         ND01)   ui_print "- 您的机型: Z9|Z9少年版-${imoo_ver}_${produce}.${cta}(${cta_ver}).${API}" ;;
-        ND03)   ui_print "- 您的机型: Z10-${imoo_ver}_${produce}.${cta}(${cta_ver}).${API}";;
+        ND03)   ui_print "- 您的机型: Z10|Z10少年版-${imoo_ver}_${produce}.${cta}(${cta_ver}).${API}";;
+        ND08)   ui_print "- 您的机型: Z11|Z11少年版-${imoo_ver}_${produce}.${cta}(${cta_ver}).${API}";;
         *) abort "-  不支持的机型-${model}" ;;
     esac
 }
@@ -136,10 +136,6 @@ module_validation(){
     else
         ui_print "- Magisk版本: $MAGISK_VER ($MAGISK_VER_CODE)"
     fi
-    if [ "$API" -ne 27 ]; then
-    ui_print "! 安卓版本不兼容: ${API}，安装终止。"
-    abort "! 设备SDK应为27 (Android 8.1)"
-    fi
     for f in /data/adb/modules/*/module.prop; do
         sed -i '/^priority=/d' "$f"
     done
@@ -157,9 +153,9 @@ sundry_shell(){
             touch "$dir/remove"
         fi
     done
-    if [ -z "$max_version" ] || [ "$max_version" -lt 12150 ]; then
+    if [ -z "$max_version" ] || [ "$max_version" -lt 123020 ]; then
         ui_print "- 个性主题版本过低(${max_version:-无}),正在覆盖升级"
-        pm install -r -d -t "$TMPDIR/theme12150.apk" || echo "- 看起来失败了呢..."
+        pm install -r -d -t "$TMPDIR/theme.apk" || echo "- 看起来失败了呢..."
     else
         ui_print "- 个性主题已满足要求($max_version)"
     fi
@@ -172,10 +168,10 @@ sundry_shell(){
     theme_db="/data/user/0/com.xtc.theme/databases"
     mkdir -p ${theme_db}
     am force-stop com.xtc.theme 2>/dev/null || true
-    cp -af "${TMPDIR}/theme_package.db" "${theme_db}/theme_package.db"
-    cp -af "${TMPDIR}/personality_charge.db" "${theme_db}/personality_charge.db"
-    chmod 444 "${theme_db}/theme_package.db"
-    chmod 444 "${theme_db}/personality_charge.db"
+    ##cp -af "${TMPDIR}/theme_package.db" "${theme_db}/theme_package.db"
+    ##cp -af "${TMPDIR}/personality_charge.db" "${theme_db}/personality_charge.db"
+    ##chmod 444 "${theme_db}/theme_package.db"
+    ##chmod 444 "${theme_db}/personality_charge.db"
     sleep 2
     pm clear com.xtc.theme >&2 || true
     Modata="/data/adb/modules/${id}"
@@ -193,7 +189,7 @@ sundry_shell(){
     unzip -o "${ZIPFILE}" 'system/*' -d "${MODPATH}" >&2 || abort "解压挂载文件出错"
     unzip -o "${ZIPFILE}" 'Sundry/*' -d "${MODPATH}" >&2 || abort "解压挂载文件出错"
     [ -f "${MODPATH}/module.prop" ] || abort "module.prop 文件未能成功解压"
-    rm -rf "${MODPATH}/theme12150.apk"
+    rm -rf "${MODPATH}/theme.apk"
     cmd package compile -m everything-profile -f com.xtc.theme >&2 || true
 }
 set_permissions() {
@@ -211,7 +207,33 @@ set_permissions() {
   ui_print "- 正在努力清理环境中哇 ＞﹏＜"
 }
 
+get_user_name() {
+    query_result=$(content query --uri content://com.xtc.provider/BaseDataProvider/watchId/1 --projection name 2>/dev/null)
 
+    if [ -z "$query_result" ] || [ "${query_result#*null}" != "$query_result" ]; then
+        return 1
+    fi
+
+    user_name="${query_result#*name=}"
+    user_name="${user_name%%[[:space:]]*}"
+    user_name="${user_name%%,*}"
+
+    if [ -n "$user_name" ]; then
+        echo "$user_name"
+    else
+        return 1
+    fi
+}
+
+hello_user() {
+    if user_name=$(get_user_name); then
+        ui_print "- 你好，$user_name ヾ(≧▽≦*)o"
+    else
+        ui_print "- 你好 ＞﹏＜"
+    fi
+}
+
+hello_user
 on_sundry
 print_modname
 module_validation
