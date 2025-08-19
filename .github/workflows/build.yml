@@ -1,161 +1,156 @@
-name: Package and Release
+name: Publish
 
 on:
-  pull_request:
-    branches: [ main ]
   push:
-    branches: [ main ]
+    tags:
+      - 'v*'
+
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version (optional)'
+        description: '发布版本号 (例如: v3.0.1.3)'
         required: false
         type: string
 
+env:
+  MODULE_NAME: XTC-ThemePro
+
 jobs:
-  build:
+  build-and-release:
+    name: Build and release
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: read
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
 
-    - name: Set environment variables
-      id: env_setup
-      run: |
-        # Check if this is a release build
-        RELEASE_VERSION=""
-        IS_RELEASE="false"
-        if [[ "${{ github.event.inputs.version }}" != "" ]]; then
-          RELEASE_VERSION="${{ github.event.inputs.version }}"
-          IS_RELEASE="true"
-        elif [[ "${{ github.event.head_commit.message }}" == *"release"* ]] || [[ "${{ github.event.head_commit.message }}" == *"Release"* ]]; then
-          RELEASE_VERSION=$(echo "${{ github.event.head_commit.message }}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' | head -1)
-          if [[ "$RELEASE_VERSION" != "" ]]; then
-            IS_RELEASE="true"
+      - name: Validate version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            if [ -z "${{ github.event.inputs.version }}" ]; then
+              echo "[DEBUG] 必须指定版本号"
+              exit 1
+            fi
+            VERSION="${{ github.event.inputs.version }}"
+            if [[ ! $VERSION =~ ^v ]]; then
+              VERSION="v$VERSION"
+            fi
+          else
+            VERSION="${GITHUB_REF#refs/tags/}"
           fi
-        fi
-        # Set default version for non-release builds
-        if [[ "$IS_RELEASE" == "false" ]]; then
-          RELEASE_VERSION="dev-$(date +%Y%m%d-%H%M%S)"
-        fi
-        ZIP_FILENAME="XTC-ThemePro_${RELEASE_VERSION}.zip"
-        echo "IS_RELEASE=${IS_RELEASE}" >> $GITHUB_ENV
-        echo "RELEASE_VERSION=${RELEASE_VERSION}" >> $GITHUB_ENV
-        echo "ZIP_FILENAME=${ZIP_FILENAME}" >> $GITHUB_ENV
-        echo "is_release=${IS_RELEASE}" >> $GITHUB_OUTPUT
-        echo "release_version=${RELEASE_VERSION}" >> $GITHUB_OUTPUT
-        echo "zip_filename=${ZIP_FILENAME}" >> $GITHUB_OUTPUT
-        echo "构建版本: ${RELEASE_VERSION}"
-        echo "是否发布: ${IS_RELEASE}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version_without_v=${VERSION#v}" >> $GITHUB_OUTPUT
+          echo "[DEBUG] Release version: $VERSION"
 
-    - name: Package module
-      run: |
-        mkdir -p build
-        mkdir -p build/docs/img
-        cp -r docs/img/favicon.png build/docs/img
-        cp -r Sundry build/
-        cp -r files build/
-        cp -r system build/
-        cp -r META-INF build/
-        cp customize.sh build/
-        cp module.prop build/
-        cp uninstall.sh build/
-        cp update.json build/
-        cp README.md build/
+      - name: Create tag
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          echo "[DEBUG] Creating tag: $VERSION"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -f "$VERSION" -m "Release $VERSION"
+          git push origin "$VERSION" --force
 
-        find build/ -name ".DS_Store" -delete 2>/dev/null || true
-        find build/ -name "Thumbs.db" -delete 2>/dev/null || true
-        find build/ -name "*.bak" -delete 2>/dev/null || true
-        find build/ -name "*.tmp" -delete 2>/dev/null || true
-        find build/ -name "*.log" -delete 2>/dev/null || true
-         if [[ "${{ env.IS_RELEASE }}" == "true" ]]; then
-           echo "正在更新版本信息到 ${{ env.RELEASE_VERSION }}..."
-           # Update module.prop
-           sed -i "s/^version=.*/version=${{ env.RELEASE_VERSION }}/" build/module.prop
+      - name: Setup git-cliff
+        uses: kenji-miyake/setup-git-cliff@v2
 
-           # Update update.json
-           sed -i "s/\"version\": \".*\"/\"version\": \"${{ env.RELEASE_VERSION }}\"/" build/update.json
-           sed -i "s/download\/[0-9\.]*/download\/${{ env.RELEASE_VERSION }}/" build/update.json
-           sed -i "s/XTC-ThemePro_[0-9\.]*\.zip/XTC-ThemePro_${{ env.RELEASE_VERSION }}.zip/" build/update.json
-         fi
+      - name: Generate changelog
+        run: |
+          git-cliff --config .github/cliff.toml --latest --strip header > changelog.md
 
-         # Package with maximum compression
-         cd build
-         zip -9 -r "../${{ env.ZIP_FILENAME }}" .
-         cd ..
+      - name: Update version info
+        run: |
+          VERSION="${{ steps.version.outputs.version_without_v }}"
+          echo "[DEBUG] 更新版本到: $VERSION"
+          VERSION_CODE=$(echo $VERSION | sed 's/\.//g' | sed 's/^/3/')
+          sed -i "s/^version=.*/version=$VERSION/" module.prop
+          sed -i "s/^versionCode=.*/versionCode=$VERSION_CODE/" module.prop
+          REPO_URL="https://gh-proxy.com/github.com/${{ github.repository }}"
+          cat > update.json << EOF
+          {
+              "version": "$VERSION",
+              "versionCode": $VERSION_CODE,
+              "zipUrl": "$REPO_URL/releases/download/${{ steps.version.outputs.version }}/${MODULE_NAME}_$VERSION.zip",
+              "changelog": "$REPO_URL/releases/download/${{ steps.version.outputs.version }}/changelog.md"
+          }
+          EOF
 
-         echo "打包完成: ${{ env.ZIP_FILENAME }}"
-         echo "文件大小: $(du -h "${{ env.ZIP_FILENAME }}" | cut -f1)"
+      - name: Commit version updates
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: | 
+            Publish: version ${{ steps.version.outputs.version }}
 
-    - name: Generate changelog
-      if: env.IS_RELEASE == 'true'
-      run: |
-        LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-        # Create formatted changelog
-        cat > CHANGELOG.md << EOF
-        # 🎉 新版本
-        ## 📋 版本信息
-        - **版本**: ${{ env.RELEASE_VERSION }}
-        - **发布日期**: $(date '+%Y-%m-%d %H:%M:%S UTC')
-        - **构建**: GitHub Actions
-        ## 📝 更新内容
-        EOF
-        if [[ "$LATEST_TAG" != "" ]]; then
-          echo "### 🔄 自 $LATEST_TAG 以来的变更" >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          git log ${LATEST_TAG}..HEAD --pretty=format:"- %s (%h)" --no-merges | grep -v "Release:" >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          COMMIT_COUNT=$(git rev-list --count ${LATEST_TAG}..HEAD)
-          FILES_CHANGED=$(git diff --name-only ${LATEST_TAG}..HEAD | wc -l)
-          echo "### 📊 统计信息" >> CHANGELOG.md
-          echo "- **提交数量**: ${COMMIT_COUNT}" >> CHANGELOG.md
-          echo "- **文件变更**: ${FILES_CHANGED}" >> CHANGELOG.md
-        else
-          echo "### 🎊 首次发布" >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          echo "这是 XTC-ThemePro 的首次发布！" >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
-          echo "#### ✨ 功能特性" >> CHANGELOG.md
-          git log --pretty=format:"- %s (%h)" --no-merges | head -20 | grep -v "Release:" >> CHANGELOG.md
-        fi
+            Co-authored-by: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
+          commit_options: '--signoff'
+          commit_user_name: 'ChimeYao-bot'
+          commit_user_email: 'ChimeYao@outlook.jp'
+          commit_author: 'ChimeYao-bot <ChimeYao@outlook.jp>'
+          file_pattern: "module.prop update.json"
 
-        cat >> CHANGELOG.md << EOF
-        ---
-        💝 **感谢使用喵**
-        EOF
+      - name: Build Magisk module
+        run: |
+          VERSION="${{ steps.version.outputs.version_without_v }}"
+          ZIP_NAME="${MODULE_NAME}_$VERSION.zip"
+          mkdir -p temp_module
+          rsync -av --exclude='.git*' \
+                    --exclude='temp_module' \
+                    --exclude='docs' \
+                    --exclude='.github/*' \
+                    --exclude='changelog.md' \
+                    --exclude='CHANGELOG.md' \
+                    . temp_module/
+          cd temp_module
+          zip -9 -r "../$ZIP_NAME" . -x "*.git*" "docs/*" "*.md"
+          cd ..
+          rm -rf temp_module
 
-        echo "📄 生成的更新日志:"
-         cat CHANGELOG.md
+          echo "[DEBUG] Module creation completed: $ZIP_NAME"
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: XTC-ThemePro-${{ env.RELEASE_VERSION }}
-        path: |
-            ${{ env.ZIP_FILENAME }}
-            README.md
+      - name: Calculate checksums
+        id: checksums
+        run: |
+          VERSION="${{ steps.version.outputs.version_without_v }}"
+          ZIP_NAME="${MODULE_NAME}_$VERSION.zip"
+          MD5_SUM=$(md5sum "$ZIP_NAME" | cut -d' ' -f1)
+          SHA256_SUM=$(sha256sum "$ZIP_NAME" | cut -d' ' -f1)
+          FILE_SIZE=$(stat -c%s "$ZIP_NAME")
+          echo "md5=$MD5_SUM" >> $GITHUB_OUTPUT
+          echo "sha256=$SHA256_SUM" >> $GITHUB_OUTPUT
+          echo "size=$FILE_SIZE" >> $GITHUB_OUTPUT
+          echo "[DEBUG] File: $ZIP_NAME ($FILE_SIZE bytes)"
 
-    - name: Create release
-      if: env.IS_RELEASE == 'true'
-      id: create_release
-      uses: softprops/action-gh-release@v2
-      with:
-        tag_name: v${{ env.RELEASE_VERSION }}
-        name: 🎨 XTC-ThemePro v${{ env.RELEASE_VERSION }}
-        body_path: CHANGELOG.md
-        draft: false
-        prerelease: false
-        files: |
-          ${{ env.ZIP_FILENAME }}
-          CHANGELOG.md
-        fail_on_unmatched_files: true
-        generate_release_notes: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Prepare release summary
+        run: |
+          VERSION="${{ steps.version.outputs.version_without_v }}"
+          echo "" >> changelog.md
+          echo "**文件**: \`${MODULE_NAME}_${VERSION}.zip\` (${{ steps.checksums.outputs.size }} 字节)" >> changelog.md
+          echo "**MD5**: \`${{ steps.checksums.outputs.md5 }}\`" >> changelog.md
+          echo "**SHA256**: \`${{ steps.checksums.outputs.sha256 }}\`" >> changelog.md
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+          ## 🎉 ${MODULE_NAME} 新版本 v${VERSION}
+          **文件**: \`${MODULE_NAME}_${VERSION}.zip\` (${{ steps.checksums.outputs.size }} 字节)
+          **MD5**: \`${{ steps.checksums.outputs.md5 }}\`
+          **SHA256**: \`${{ steps.checksums.outputs.sha256 }}\`
+          EOF
+
+          echo "[DEBUG] Release summary preparation completed"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: "🎨 ${{ env.MODULE_NAME }} ${{ steps.version.outputs.version }}"
+          body_path: changelog.md
+          draft: true
+          prerelease: false
+          files: |
+            ${{ env.MODULE_NAME }}_${{ steps.version.outputs.version_without_v }}.zip
+            changelog.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

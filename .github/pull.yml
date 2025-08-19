@@ -1,0 +1,7 @@
+# Pull App
+version: "1"
+rules:
+  - base: main
+    upstream: baiyao105:main
+    mergeMethod: hardreset
+    mergeUnstable: true
