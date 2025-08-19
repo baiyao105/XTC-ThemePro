@@ -19,6 +19,9 @@ jobs:
   build-and-release:
     name: Build and release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
 
     steps:
       - name: checkout repository
@@ -51,8 +54,6 @@ jobs:
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           echo "[DEBUG] Creating tag: $VERSION"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -f "$VERSION" -m "Release $VERSION"
           git push origin "$VERSION" --force
 
