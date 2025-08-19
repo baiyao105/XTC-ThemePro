@@ -26,6 +26,7 @@ on_sundry() {
         Sundry/hitokoto
         Sundry/config.conf
         files/personality_charge.db
+        files/theme_package.db
         files/theme.apk
         module.prop
     "
@@ -35,7 +36,7 @@ on_sundry() {
     mkdir -p "/sdcard/Android/baiyao105/ThemePro"
     bindnumber=$(getprop ro.boot.bindnumber)
     chipid=$(getprop ro.boot.xtc.chipid)
-    model=$(_grep_prop ro.product.innermodel)
+    model=$(getprop ro.product.innermodel)
     serverinner=$(getprop persist.sys.serverinner "${model}")
     if [ -z "$serverinner" ]; then
         serverinner="${model}"
@@ -141,6 +142,11 @@ module_validation(){
     done
 }
 sundry_shell(){
+    if getprop persist.sys.ostype | grep -q "junior"; then
+        ui_print "- 您当前使用的是:青春系统"
+    else
+        ui_print "- 您当前使用的是:经典系统(非青春系统)"
+    fi
     current_versions=$(dumpsys package com.xtc.theme | grep versionCode | awk '{print $1}' | sed 's/versionCode=//' | sort -nr)
     max_version=$(echo "$current_versions" | head -n 1)
     directories="
@@ -164,14 +170,14 @@ sundry_shell(){
     rm -rf /sdcard/xtc/themepackage 2>/dev/null || true
     am start com.xtc.theme/.view.SplashActivity >&2 || true
     am force-stop com.xtc.theme 2>/dev/null || true
-    ui_print "- 替换数据库"
+    ui_print "- 替换数据库ing..."
     theme_db="/data/user/0/com.xtc.theme/databases"
     mkdir -p ${theme_db}
     am force-stop com.xtc.theme 2>/dev/null || true
-    ##cp -af "${TMPDIR}/theme_package.db" "${theme_db}/theme_package.db"
-    ##cp -af "${TMPDIR}/personality_charge.db" "${theme_db}/personality_charge.db"
-    ##chmod 444 "${theme_db}/theme_package.db"
-    ##chmod 444 "${theme_db}/personality_charge.db"
+    cp -af "${TMPDIR}/theme_package.db" "${theme_db}/theme_package.db"
+    cp -af "${TMPDIR}/personality_charge.db" "${theme_db}/personality_charge.db"
+    chmod 444 "${theme_db}/theme_package.db"
+    chmod 444 "${theme_db}/personality_charge.db"
     sleep 2
     pm clear com.xtc.theme >&2 || true
     Modata="/data/adb/modules/${id}"
@@ -213,11 +219,11 @@ get_user_name() {
     if [ -z "$query_result" ] || [ "${query_result#*null}" != "$query_result" ]; then
         return 1
     fi
-
+    
     user_name="${query_result#*name=}"
     user_name="${user_name%%[[:space:]]*}"
     user_name="${user_name%%,*}"
-
+   
     if [ -n "$user_name" ]; then
         echo "$user_name"
     else
