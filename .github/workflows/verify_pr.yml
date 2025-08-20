@@ -83,8 +83,10 @@ jobs:
 
       - name: Fail job if checks failed
         if: steps.branch.outputs.head_ref_branch == 'main' || steps.semantic-check.outcome == 'failure'
+        env:
+          HEAD_REF_BRANCH: ${{ steps.branch.outputs.head_ref_branch }}
         run: |
-          if [[ "${{ steps.branch.outputs.head_ref_branch }}" == "main" ]]; then
+          if [[ "$HEAD_REF_BRANCH" == "main" ]]; then
             echo "- 分支检查失败: PR 来自 main 分支"
           fi
           if [[ "${{ steps.semantic-check.outcome }}" == "failure" ]]; then
