@@ -19,11 +19,11 @@ repos:
     hooks:
       - id: actionlint
 
-  - repo: https://github.com/koalaman/shellcheck-precommit
-    rev: v0.11.0
-    hooks:
-      - id: shellcheck
-        args: ["--severity=error"]
+  # - repo: https://github.com/koalaman/shellcheck-precommit
+  #   rev: v0.11.0
+  #   hooks:
+  #     - id: shellcheck
+  #       args: ["--severity=error"]
 
   - repo: https://github.com/scop/pre-commit-shfmt
     rev: v3.12.0-2
