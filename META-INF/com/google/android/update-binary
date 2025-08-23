@@ -16,27 +16,27 @@ mkdir -p $TMPDIR
 ui_print() { echo "$1"; }
 
 require_new_magisk() {
-  ui_print "***********************************"
-  ui_print "Magisk版本为: $MAGISK_VER_CODE"
-  ui_print "请尝试修复运行环境"
-  ui_print "Developed by baiyao105"
-  ui_print "呜呜呜,代码咬我了啊……"
-  ui_print "***********************************"
-  exit 1
+	ui_print "***********************************"
+	ui_print "Magisk版本为: $MAGISK_VER_CODE"
+	ui_print "请尝试修复运行环境"
+	ui_print "Developed by baiyao105"
+	ui_print "呜呜呜,代码咬我了啊……"
+	ui_print "***********************************"
+	exit 1
 }
 
 is_legacy_script() {
-  unzip -l "$ZIPFILE" install.sh | grep -q install.sh
-  return $?
+	unzip -l "$ZIPFILE" install.sh | grep -q install.sh
+	return $?
 }
 
 print_modname() {
-  len=$(echo -n "$MODNAME" | wc -c)
-  len=$((len + 2))
-  pounds=$(printf "%${len}s" | tr ' ' '*')
-  ui_print "Developed by baiyao105"
-  ui_print "呜呜呜,代码咬我了啊……"
-  ui_print "*************************"
+	len=$(echo -n "$MODNAME" | wc -c)
+	len=$((len + 2))
+	pounds=$(printf "%${len}s" | tr ' ' '*')
+	ui_print "Developed by baiyao105"
+	ui_print "呜呜呜,代码咬我了啊……"
+	ui_print "*************************"
 }
 
 ##############
@@ -75,9 +75,9 @@ unzip -o "$ZIPFILE" module.prop -d $TMPDIR >&2
 
 $BOOTMODE && MODDIRNAME=modules_update || MODDIRNAME=modules
 MODULEROOT=$NVBASE/$MODDIRNAME
-MODID=`grep_prop id $TMPDIR/module.prop`
+MODID=$(grep_prop id $TMPDIR/module.prop)
 MODPATH=$MODULEROOT/$MODID
-MODNAME=`grep_prop name $TMPDIR/module.prop`
+MODNAME=$(grep_prop name $TMPDIR/module.prop)
 
 # Create mod paths
 rm -rf $MODPATH 2>/dev/null
@@ -88,75 +88,75 @@ mkdir -p $MODPATH
 ##########
 
 if is_legacy_script; then
-  unzip -oj "$ZIPFILE" module.prop install.sh uninstall.sh 'common/*' -d $TMPDIR >&2
+	unzip -oj "$ZIPFILE" module.prop install.sh uninstall.sh 'common/*' -d $TMPDIR >&2
 
-  # Load install script
-  . $TMPDIR/install.sh
+	# Load install script
+	. $TMPDIR/install.sh
 
-  # Callbacks
-  print_modname
-  on_install
+	# Callbacks
+	print_modname
+	on_install
 
-  # Custom uninstaller
-  [ -f $TMPDIR/uninstall.sh ] && cp -af $TMPDIR/uninstall.sh $MODPATH/uninstall.sh
+	# Custom uninstaller
+	[ -f $TMPDIR/uninstall.sh ] && cp -af $TMPDIR/uninstall.sh $MODPATH/uninstall.sh
 
-  # Skip mount
-  $SKIPMOUNT && touch $MODPATH/skip_mount
+	# Skip mount
+	$SKIPMOUNT && touch $MODPATH/skip_mount
 
-  # prop file
-  $PROPFILE && cp -af $TMPDIR/system.prop $MODPATH/system.prop
+	# prop file
+	$PROPFILE && cp -af $TMPDIR/system.prop $MODPATH/system.prop
 
-  # Module info
-  cp -af $TMPDIR/module.prop $MODPATH/module.prop
+	# Module info
+	cp -af $TMPDIR/module.prop $MODPATH/module.prop
 
-  # post-fs-data scripts
-  $POSTFSDATA && cp -af $TMPDIR/post-fs-data.sh $MODPATH/post-fs-data.sh
+	# post-fs-data scripts
+	$POSTFSDATA && cp -af $TMPDIR/post-fs-data.sh $MODPATH/post-fs-data.sh
 
-  # service scripts
-  $LATESTARTSERVICE && cp -af $TMPDIR/service.sh $MODPATH/service.sh
+	# service scripts
+	$LATESTARTSERVICE && cp -af $TMPDIR/service.sh $MODPATH/service.sh
 
-  set_permissions
+	set_permissions
 else
-  print_modname
+	print_modname
 
-  unzip -o "$ZIPFILE" customize.sh -d $MODPATH >&2
+	unzip -o "$ZIPFILE" customize.sh -d $MODPATH >&2
 
-  if ! grep -q '^SKIPUNZIP=1$' $MODPATH/customize.sh 2>/dev/null; then
-    ui_print "- Extracting module files"
-    unzip -o "$ZIPFILE" -x 'META-INF/*' -d $MODPATH >&2
+	if ! grep -q '^SKIPUNZIP=1$' $MODPATH/customize.sh 2>/dev/null; then
+		ui_print "- Extracting module files"
+		unzip -o "$ZIPFILE" -x 'META-INF/*' -d $MODPATH >&2
 
-    # Default permissions
-    set_perm_recursive $MODPATH 0 0 0755 0644
-  fi
+		# Default permissions
+		set_perm_recursive $MODPATH 0 0 0755 0644
+	fi
 
-  # Load customization script
-  [ -f $MODPATH/customize.sh ] && . $MODPATH/customize.sh
+	# Load customization script
+	[ -f $MODPATH/customize.sh ] && . $MODPATH/customize.sh
 fi
 
 # Handle replace folders
 for TARGET in $REPLACE; do
-  ui_print "- Replace target: $TARGET"
-  mktouch $MODPATH$TARGET/.replace
+	ui_print "- Replace target: $TARGET"
+	mktouch $MODPATH$TARGET/.replace
 done
 
 if $BOOTMODE; then
-  # Update info for Magisk Manager
-  mktouch $NVBASE/modules/$MODID/update
-  cp -af $MODPATH/module.prop $NVBASE/modules/$MODID/module.prop
+	# Update info for Magisk Manager
+	mktouch $NVBASE/modules/$MODID/update
+	cp -af $MODPATH/module.prop $NVBASE/modules/$MODID/module.prop
 fi
 
 # Copy over custom sepolicy rules
 if [ -f $MODPATH/sepolicy.rule -a -e $PERSISTDIR ]; then
-  ui_print "- Installing custom sepolicy patch"
-  PERSISTMOD=$PERSISTDIR/magisk/$MODID
-  mkdir -p $PERSISTMOD
-  cp -af $MODPATH/sepolicy.rule $PERSISTMOD/sepolicy.rule
+	ui_print "- Installing custom sepolicy patch"
+	PERSISTMOD=$PERSISTDIR/magisk/$MODID
+	mkdir -p $PERSISTMOD
+	cp -af $MODPATH/sepolicy.rule $PERSISTMOD/sepolicy.rule
 fi
 
 # Remove stuffs that don't belong to modules
 rm -rf \
-$MODPATH/system/placeholder $MODPATH/customize.sh \
-$MODPATH/README.md $MODPATH/.git* 2>/dev/null
+	$MODPATH/system/placeholder $MODPATH/customize.sh \
+	$MODPATH/README.md $MODPATH/.git* 2>/dev/null
 
 ##############
 # Finalizing

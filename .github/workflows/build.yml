@@ -40,14 +40,14 @@ jobs:
               exit 1
             fi
             VERSION="${{ github.event.inputs.version }}"
-            if [[ ! $VERSION =~ ^v ]]; then
+            if [[ ! "$VERSION" =~ ^v ]]; then
               VERSION="v$VERSION"
             fi
           else
             VERSION="${GITHUB_REF#refs/tags/}"
           fi
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "version_without_v=${VERSION#v}" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "version_without_v=${VERSION#v}" >> "$GITHUB_OUTPUT"
           echo "[DEBUG] Release version: $VERSION"
 
       - name: Import GPG key
@@ -65,8 +65,8 @@ jobs:
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           echo "[DEBUG] Creating tag: $VERSION"
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "ChimeYao-bot"
+          git config user.email "ChimeYao@outlook.jp"
           git tag -f "$VERSION" -m "Release $VERSION"
           git push origin "$VERSION" --force
         env:
@@ -77,7 +77,7 @@ jobs:
 
       - name: Generate changelog
         run: |
-          git-cliff --config .github/cliff.toml --latest --strip header > changelog.md
+          git-cliff --config .github/cliff.toml --output changelog.md
 
       - name: Update version info
         run: |
@@ -103,7 +103,7 @@ jobs:
             Publish: version ${{ steps.version.outputs.version }}
 
             Co-authored-by: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
-          commit_options: "--signoff"
+          commit_options: "--signoff --no-verify"
           commit_user_name: "ChimeYao-bot"
           commit_user_email: "ChimeYao@outlook.jp"
           commit_author: "ChimeYao-bot <ChimeYao@outlook.jp>"
@@ -136,19 +136,23 @@ jobs:
           MD5_SUM=$(md5sum "$ZIP_NAME" | cut -d' ' -f1)
           SHA256_SUM=$(sha256sum "$ZIP_NAME" | cut -d' ' -f1)
           FILE_SIZE=$(stat -c%s "$ZIP_NAME")
-          echo "md5=$MD5_SUM" >> $GITHUB_OUTPUT
-          echo "sha256=$SHA256_SUM" >> $GITHUB_OUTPUT
-          echo "size=$FILE_SIZE" >> $GITHUB_OUTPUT
+          {
+            echo "md5=$MD5_SUM"
+            echo "sha256=$SHA256_SUM"
+            echo "size=$FILE_SIZE"
+          } >> "$GITHUB_OUTPUT"
           echo "[DEBUG] File: $ZIP_NAME ($FILE_SIZE bytes)"
 
       - name: Prepare release summary
         run: |
           VERSION="${{ steps.version.outputs.version_without_v }}"
-          echo "" >> changelog.md
-          echo "**文件**: \`${MODULE_NAME}_${VERSION}.zip\` (${{ steps.checksums.outputs.size }} 字节)" >> changelog.md
-          echo "**MD5**: \`${{ steps.checksums.outputs.md5 }}\`" >> changelog.md
-          echo "**SHA256**: \`${{ steps.checksums.outputs.sha256 }}\`" >> changelog.md
-          cat >> $GITHUB_STEP_SUMMARY << EOF
+          {
+            echo ""
+            echo "**文件**: \`${MODULE_NAME}_${VERSION}.zip\` (${{ steps.checksums.outputs.size }} 字节)"
+            echo "**MD5**: \`${{ steps.checksums.outputs.md5 }}\`"
+            echo "**SHA256**: \`${{ steps.checksums.outputs.sha256 }}\`"
+          } >> changelog.md
+          cat >> "$GITHUB_STEP_SUMMARY" << EOF
           ## 🎉 ${MODULE_NAME} 新版本 v${VERSION}
           **文件**: \`${MODULE_NAME}_${VERSION}.zip\` (${{ steps.checksums.outputs.size }} 字节)
           **MD5**: \`${{ steps.checksums.outputs.md5 }}\`
