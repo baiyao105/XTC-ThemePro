@@ -37,6 +37,7 @@
 ## 贡献
 [![Contributors](https://contrib.nn.ci/api?repo=baiyao105/XTC-ThemePro)](https://github.com/baiyao105/XTC-ThemePro/graphs/contributors)
 ![Alt](https://repobeats.axiom.co/api/embed/71fd9aff86e3b2020198e56debeae2fcd81d660b.svg "Repobeats analytics image")
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fbaiyao105%2FXTC-ThemePro.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fbaiyao105%2FXTC-ThemePro?ref=badge_shield)
 
 
 ## Star History
@@ -54,3 +55,7 @@
 ### 🐟 ?
   - 要给我点Star喵~
   - 自己探索吧,我就不写文档,有本事来艹我啊。
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fbaiyao105%2FXTC-ThemePro.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fbaiyao105%2FXTC-ThemePro?ref=badge_large)
