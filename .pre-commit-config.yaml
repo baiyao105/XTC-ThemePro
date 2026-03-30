@@ -15,7 +15,7 @@ repos:
         args: ["--fix=lf"]
 
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.7
+    rev: v1.7.12
     hooks:
       - id: actionlint
 
@@ -26,7 +26,7 @@ repos:
   #       args: ["--severity=error"]
 
   - repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.12.0-2
+    rev: v3.13.0-1
     hooks:
       - id: shfmt
 
@@ -41,7 +41,7 @@ repos:
   #     - id: mdformat
 
   - repo: https://github.com/adrienverge/yamllint
-    rev: v1.37.1
+    rev: v1.38.0
     hooks:
       - id: yamllint
         args:
@@ -49,7 +49,7 @@ repos:
           - "{extends: default, rules: {line-length: disable}}"
 
   - repo: https://github.com/pappasam/toml-sort
-    rev: v0.24.3
+    rev: v0.24.4
     hooks:
       - id: toml-sort-fix
         args: ["--all", "--in-place"]
