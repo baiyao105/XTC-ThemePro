@@ -1,2 +1,2 @@
 files/** filter=lfs diff=lfs merge=lfs -text
-system/** filter=lfs diff=lfs merge=lfs -text
+system/vendor/** filter=lfs diff=lfs merge=lfs -text

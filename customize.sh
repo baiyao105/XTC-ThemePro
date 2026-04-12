@@ -8,7 +8,7 @@ export SKIPUNZIP=1
 BASE="/sdcard/Android/baiyao105/ThemePro"
 
 extract() {
-	unzip -j -o "${ZIPFILE}" "$1" -d "$2" >&2 || abort "- 解压 $1 失败"
+	unzip -j -oq "${ZIPFILE}" "$1" -d "$2" || abort "- 解压 $1 失败"
 }
 
 get_config() {
@@ -30,8 +30,11 @@ on_sundry() {
 	ui_print "- 正在解压临时文件(*>﹏<*)"
 	extract "Sundry/config.conf" "$TMPDIR"
 	extract "Sundry/hitokoto" "$TMPDIR"
+    extract "Sundry/7z" "$TMPDIR"
 	extract "files/theme.apk" "$TMPDIR"
+    extract "files/Filp/filp_path" "$TMPDIR"
 	extract "module.prop" "$TMPDIR"
+    filp_path=$(cat "$TMPDIR/filp_path")
 
 	bindnumber=$(getprop ro.boot.bindnumber)
 	chipid=$(getprop ro.boot.xtc.chipid)
@@ -146,23 +149,28 @@ sundry_shell() {
 	ui_print "- 释放文件"
 	ui_print "- 过程比较久,请稍等一小会(≧﹏≦)"
 	Modata="/data/adb/modules/${id}"
-	mkdir -p "${MODPATH}/system/bin" "${MODPATH}/Sundry" "${BASE}/Themes"
+	mkdir -p "${MODPATH}/system/bin" "${MODPATH}/Sundry" "${BASE}/Themes" "${MODPATH}/${filp_path}"
 	for f in \
 		module.prop \
-		files/themepro.sh \
+		Sundry/themepro.sh \
 		uninstall.sh \
 		action.sh; do
 		extract "$f" "${MODPATH}"
 	done
-	unzip -o "${ZIPFILE}" "system/*" -d "${MODPATH}" >&2 || abort "解压system失败"
-	unzip -o "${ZIPFILE}" "Sundry/*" -d "${MODPATH}" >&2 || abort "解压挂载文件出错"
+	unzip -oq "${ZIPFILE}" "system/*" -d "${MODPATH}" || abort "解压system失败"
+	unzip -oq "${ZIPFILE}" "Sundry/*" -d "${MODPATH}" || abort "解压挂载文件出错"
 	echo "*/60 * * * * ${Modata}/Sundry/pre_execute.sh" >"${MODPATH}/root"
-	unzip -o "${ZIPFILE}" "files/Themes/*" -d "${BASE}"
+	unzip -oq "${ZIPFILE}" "files/Themes/*" -d "${BASE}/" || abort "解压主题文件出错"
+    unzip -oq "${ZIPFILE}" "files/Filp/*" -d "${MODPATH}/${filp_path}" || abort "解压Filp文件出错"
+    mv -f "${BASE}/files/Themes"* "${BASE}/Themes" || abort "移动主题文件失败"
+    mv -f "${MODPATH}/${filp_path}/files/Filp"* "${MODPATH}/${filp_path}/" || abort "移动Filp文件失败"
+    rm -rf "${BASE}/files" || abort "删除临时文件失败"
+    rm -rf "${MODPATH}/${filp_path}/files" || abort "删除临时文件失败"
 	cmd package compile -m everything-profile -f com.xtc.theme >&2 || true
 }
 
 set_permissions() {
-	chmod +x "${MODPATH}/Sundry/themepro.sh"
+	chmod +x "${MODPATH}/themepro.sh"
 	chmod +x "${MODPATH}/Sundry/pre_execute.sh"
 	chmod +x "${MODPATH}/system/bin/themepro"
 	set_perm_recursive "${MODPATH}" 0 0 0755 0644
@@ -170,7 +178,7 @@ set_permissions() {
 	set_perm_recursive "${MODPATH}/Sundry" 0 0 0755 0700
 	set_perm_recursive "${MODPATH}/service.sh" 0 0 0755 0700
 	set_perm_recursive "${MODPATH}/system/bin/themepro" 0 0 0755 0700
-	set_perm_recursive "${MODPATH}/Sundry/themepro.sh" 0 0 0755 0700
+	set_perm_recursive "${MODPATH}/themepro.sh" 0 0 0755 0700
 	ui_print "- 安装好啦ヾ(≧▽≦*)o"
 	ui_print "- 小贴士: 个性主题应用数据将会重置,可能丢失一些主题,是正常现象哦~"
 	ui_print "- 正在努力清理环境中哇 ＞﹏＜"
