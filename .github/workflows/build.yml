@@ -116,13 +116,14 @@ jobs:
           mkdir -p temp_module
           rsync -av --exclude='.git*' \
                     --exclude='temp_module' \
-                    --exclude='docs' \
                     --exclude='.github/*' \
                     --exclude='changelog.md' \
                     --exclude='CHANGELOG.md' \
                     . temp_module/
+          cp -af LICENSE temp_module/
+          cp -af README.md temp_module/
           cd temp_module
-          zip -9 -r "../$ZIP_NAME" . -x "*.git*" "docs/*" "*.md"
+          zip -9 -r "../$ZIP_NAME" . -x "*.git*" "docs/*"
           cd ..
           rm -rf temp_module
 
