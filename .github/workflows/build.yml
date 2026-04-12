@@ -30,6 +30,7 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
+          submodules: true
 
       - name: Validate version
         id: version
@@ -49,6 +50,8 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "version_without_v=${VERSION#v}" >> "$GITHUB_OUTPUT"
           echo "[DEBUG] Release version: $VERSION"
+          git submodule update --init --recursive
+          git submodule sync --recursive
 
       - name: Import GPG key
         id: import-gpg

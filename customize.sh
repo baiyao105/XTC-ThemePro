@@ -30,11 +30,11 @@ on_sundry() {
 	ui_print "- 正在解压临时文件(*>﹏<*)"
 	extract "Sundry/config.conf" "$TMPDIR"
 	extract "Sundry/hitokoto" "$TMPDIR"
-    extract "Sundry/7z" "$TMPDIR"
+	extract "Sundry/7z" "$TMPDIR"
 	extract "files/theme.apk" "$TMPDIR"
-    extract "files/Filp/filp_path" "$TMPDIR"
+	extract "files/Filp/filp_path" "$TMPDIR"
 	extract "module.prop" "$TMPDIR"
-    filp_path=$(cat "$TMPDIR/filp_path")
+	filp_path=$(cat "$TMPDIR/filp_path")
 
 	bindnumber=$(getprop ro.boot.bindnumber)
 	chipid=$(getprop ro.boot.xtc.chipid)
@@ -161,11 +161,11 @@ sundry_shell() {
 	unzip -oq "${ZIPFILE}" "Sundry/*" -d "${MODPATH}" || abort "解压挂载文件出错"
 	echo "*/60 * * * * ${Modata}/Sundry/pre_execute.sh" >"${MODPATH}/root"
 	unzip -oq "${ZIPFILE}" "files/Themes/*" -d "${BASE}/" || abort "解压主题文件出错"
-    unzip -oq "${ZIPFILE}" "files/Filp/*" -d "${MODPATH}/${filp_path}" || abort "解压Filp文件出错"
-    mv -f "${BASE}/files/Themes"* "${BASE}/Themes" || abort "移动主题文件失败"
-    mv -f "${MODPATH}/${filp_path}/files/Filp"* "${MODPATH}/${filp_path}/" || abort "移动Filp文件失败"
-    rm -rf "${BASE}/files" || abort "删除临时文件失败"
-    rm -rf "${MODPATH}/${filp_path}/files" || abort "删除临时文件失败"
+	unzip -oq "${ZIPFILE}" "files/Filp/*" -d "${MODPATH}/${filp_path}" || abort "解压Filp文件出错"
+	mv -f "${BASE}/files/Themes"* "${BASE}/Themes" || abort "移动主题文件失败"
+	mv -f "${MODPATH}/${filp_path}/files/Filp"* "${MODPATH}/${filp_path}/" || abort "移动Filp文件失败"
+	rm -rf "${BASE}/files" || abort "删除临时文件失败"
+	rm -rf "${MODPATH}/${filp_path}/files" || abort "删除临时文件失败"
 	cmd package compile -m everything-profile -f com.xtc.theme >&2 || true
 }
 
