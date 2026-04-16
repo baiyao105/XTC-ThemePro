@@ -40,7 +40,7 @@ on_sundry() {
 	model=$(getprop ro.product.innermodel)
 	serverinner=$(getprop persist.sys.serverinner)
 	ostype=$(getprop persist.sys.ostype)
-    is_junior=$(echo "$ostype" | grep -q "junior" && echo "青春系统" || echo "非青春系统")
+	is_junior=$(echo "$ostype" | grep -q "junior" && echo "青春系统" || echo "非青春系统")
 	color=$(getprop ro.xtcwatch.color)
 	[ -n "$color" ] && color="_$color"
 	[ -z "$serverinner" ] && serverinner="$model"
@@ -117,7 +117,7 @@ print_modname() {
 	if [ "$is_junior" = "青春系统" ]; then
 		is_junior="_junior"
 	else
-	    is_junior="_N"
+		is_junior="_N"
 	fi
 	# 颜色代号和junior一般都在xtcinfo.
 	ui_print "- 机型标识符: preset_{$model}${color}${is_junior}"
