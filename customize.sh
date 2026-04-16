@@ -103,11 +103,11 @@ print_modname() {
 	echo "${ver}" >"${BASE}/version"
 	details="${imoo_ver}_${produce}${color}.${cta}(${cta_ver}).${API}"
 	case "$model" in
-	I25) ui_print "- 您的机型: Z7-${details}" ;;
-	I32) ui_print "- 您的机型: Z8|Z8少年版-${details}-${is_junior}" ;;
 	I20) ui_print "- 您的机型: Z6DFB-${details}" ;;
+	I25) ui_print "- 您的机型: Z7-${details}" ;;
 	I25C) ui_print "- 您的机型: Z7A-${details}" ;;
 	I25D) ui_print "- 您的机型: Z7S-${details}" ;;
+	I32) ui_print "- 您的机型: Z8|Z8少年版-${details}-${is_junior}" ;;
 	ND07) ui_print "- 您的机型: Z8A-${details}" ;;
 	ND01) ui_print "- 您的机型: Z9|Z9少年版-${details}-${is_junior}" ;;
 	ND03) ui_print "- 您的机型: Z10|Z10少年版-${details}-${is_junior}" ;;
@@ -134,7 +134,7 @@ module_validation() {
 		ui_print "- KernelSU 内核空间: $KSU_KERNEL_VER_CODE"
 		ui_print "- [KernelSU]蛤(＃°Д°)?"
 	elif [ "$MAGISK_VER_CODE" -lt 23000 ]; then
-		ui_print "! Magisk版本低于23.0: $MAGISK_VER_CODE，安装终止。"
+		ui_print "! Magisk版本低于23.0: $MAGISK_VER_CODE, 安装终止。"
 		abort "!  Magisk版本低于23.0"
 	else
 		ui_print "- Magisk版本: $MAGISK_VER ($MAGISK_VER_CODE)"
