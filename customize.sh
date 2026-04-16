@@ -30,16 +30,19 @@ on_sundry() {
 	ui_print "- 正在解压临时文件(*>﹏<*)"
 	extract "Sundry/config.conf" "$TMPDIR"
 	extract "Sundry/hitokoto" "$TMPDIR"
-	extract "Sundry/7z" "$TMPDIR"
 	extract "files/theme.apk" "$TMPDIR"
 	extract "files/Filp/filp_path" "$TMPDIR"
 	extract "module.prop" "$TMPDIR"
+	extract "files/.version" "$TMPDIR"
 	filp_path=$(cat "$TMPDIR/filp_path")
-
 	bindnumber=$(getprop ro.boot.bindnumber)
 	chipid=$(getprop ro.boot.xtc.chipid)
 	model=$(getprop ro.product.innermodel)
 	serverinner=$(getprop persist.sys.serverinner)
+	ostype=$(getprop persist.sys.ostype)
+    is_junior=$(echo "$ostype" | grep -q "junior" && echo "青春系统" || echo "非青春系统")
+	color=$(getprop ro.xtcwatch.color)
+	[ -n "$color" ] && color="_$color"
 	[ -z "$serverinner" ] && serverinner="$model"
 	[ -z "$chipid" ] && abort "Chipid获取失败"
 	Hwmac=$(cat /sys/class/net/wlan0/address 2>/dev/null || echo "unknown")
@@ -83,6 +86,8 @@ on_sundry() {
 	id=$(grep_prop id "$TMPDIR/module.prop")
 	ver=$(grep_prop version "$TMPDIR/module.prop")
 	code=$(grep_prop versionCode "$TMPDIR/module.prop")
+	files_version=$(grep_prop version "$TMPDIR/.version")
+	files_date=$(grep_prop date "$TMPDIR/.version")
 	imoo_ver=$(grep_prop ro.product.current.softversion)
 	produce=$(getprop ro.product.manufacturer)
 }
@@ -90,24 +95,32 @@ on_sundry() {
 print_modname() {
 	ui_print "#####################################################"
 	ui_print "ThemePro - ${ver}(${code})_${Clog}"
+	ui_print "当前主题包版本: ${files_version}(${files_date})"
 	ui_print "● ${period}好,${name}_${Ostring}!"
 	ui_print "~ $best_text"
 	ui_print "~ 开始安装q(≧▽≦q)"
 	ui_print "#####################################################"
 	echo "${ver}" >"${BASE}/version"
-	details="${imoo_ver}_${produce}.${cta}(${cta_ver}).${API}"
+	details="${imoo_ver}_${produce}${color}.${cta}(${cta_ver}).${API}"
 	case "$model" in
 	I25) ui_print "- 您的机型: Z7-${details}" ;;
-	I32) ui_print "- 您的机型: Z8|Z8少年版-${details}" ;;
+	I32) ui_print "- 您的机型: Z8|Z8少年版-${details}-${is_junior}" ;;
 	I20) ui_print "- 您的机型: Z6DFB-${details}" ;;
 	I25C) ui_print "- 您的机型: Z7A-${details}" ;;
 	I25D) ui_print "- 您的机型: Z7S-${details}" ;;
 	ND07) ui_print "- 您的机型: Z8A-${details}" ;;
-	ND01) ui_print "- 您的机型: Z9|Z9少年版-${details}" ;;
-	ND03) ui_print "- 您的机型: Z10|Z10少年版-${details}" ;;
-	ND08) ui_print "- 您的机型: Z11|Z11少年版-${details}" ;;
+	ND01) ui_print "- 您的机型: Z9|Z9少年版-${details}-${is_junior}" ;;
+	ND03) ui_print "- 您的机型: Z10|Z10少年版-${details}-${is_junior}" ;;
+	ND08) ui_print "- 您的机型: Z11|Z11少年版-${details}-${is_junior}" ;;
 	*) abort "- 不支持的机型-${model}" ;;
 	esac
+	if [ "$is_junior" = "青春系统" ]; then
+		is_junior="_junior"
+	else
+	    is_junior="_N"
+	fi
+	# 颜色代号和junior一般都在xtcinfo.
+	ui_print "- 机型标识符: preset_{$model}${color}${is_junior}"
 }
 
 module_validation() {
@@ -126,9 +139,6 @@ module_validation() {
 	else
 		ui_print "- Magisk版本: $MAGISK_VER ($MAGISK_VER_CODE)"
 	fi
-	for f in /data/adb/modules/*/module.prop; do
-		sed -i '/^priority=/d' "$f"
-	done
 }
 
 sundry_shell() {
