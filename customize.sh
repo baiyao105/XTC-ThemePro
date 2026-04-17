@@ -28,7 +28,6 @@ mkdir -p "$BASE"
 
 on_sundry() {
 	ui_print "- 正在解压临时文件(*>﹏<*)"
-	extract "Sundry/config.conf" "$TMPDIR"
 	extract "Sundry/hitokoto" "$TMPDIR"
 	extract "files/theme.apk" "$TMPDIR"
 	extract "files/Filp/filp_path" "$TMPDIR"
@@ -56,11 +55,12 @@ on_sundry() {
 		Flog="${log_path}/install.log"
 		exec 2>"${Flog}"
 		set -x
+		set -E
 		Clog=1
-		name=协作者
+		name="大大杳杳"
 	else
 		Clog=0
-		name=小杳喵
+		name="小小杳"
 		Flog="/dev/null"
 	fi
 	# 时间段
@@ -120,7 +120,7 @@ print_modname() {
 		is_junior="_N"
 	fi
 	# 颜色代号和junior一般都在xtcinfo.
-	ui_print "- 机型标识符: preset_{$model}${color}${is_junior}"
+	ui_print "- 机型标识符: preset_$model${color}${is_junior}"
 }
 
 module_validation() {
@@ -142,18 +142,20 @@ module_validation() {
 }
 
 sundry_shell() {
-	ui_print "- 正在安装个性主题♪(´▽｀)"
 	directories="
         /data/adb/modules/theme_ful
         /data/adb/modules/alltheme
     "
 	for dir in ${directories}; do
 		if [ -d "$dir" ]; then
-			touch "$dir/skip_mount"
-			touch "$dir/remove"
+			touch "$dir/skip_mount" "$dir/remove"
 		fi
 	done
-	pm install -r -d -t "$TMPDIR/theme.apk" || abort "- 安装失败, 记得检查核心破解哦~"
+	ui_print "- 正在安装个性主题♪(´▽｀)"
+	out=$(pm install -r -d -t "$TMPDIR/theme.apk" 2>&1) || {
+		echo "!! $out"
+		abort "- 安装失败, 记得检查核心破解哦~"
+	}
 	pm clear com.xtc.theme
 
 	ui_print "- 释放文件"

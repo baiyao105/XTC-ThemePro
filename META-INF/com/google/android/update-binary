@@ -20,7 +20,7 @@ require_new_magisk() {
 	ui_print "Magisk版本为: $MAGISK_VER_CODE"
 	ui_print "请尝试修复运行环境"
 	ui_print "Developed by baiyao105"
-	ui_print "呜呜呜,代码咬我了啊……"
+	ui_print "嗯哼?(歪头"
 	ui_print "***********************************"
 	exit 1
 }
@@ -35,7 +35,7 @@ print_modname() {
 	len=$((len + 2))
 	pounds=$(printf "%${len}s" | tr ' ' '*')
 	ui_print "Developed by baiyao105"
-	ui_print "呜呜呜,代码咬我了啊……"
+	ui_print "嗯哼?(歪头"
 	ui_print "*************************"
 }
 
@@ -166,5 +166,5 @@ cd /
 $BOOTMODE || recovery_cleanup
 rm -rf $TMPDIR
 
-ui_print "- 咕…完成了喵~"
+ui_print "- 咕…完成了哦~"
 exit 0
