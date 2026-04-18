@@ -29,6 +29,7 @@ mkdir -p "$BASE"
 on_sundry() {
 	ui_print "- 正在解压临时文件(*>﹏<*)"
 	extract "Sundry/hitokoto" "$TMPDIR"
+	extract "Sundry/config.conf" "$TMPDIR"
 	extract "files/theme.apk" "$TMPDIR"
 	extract "files/Filp/filp_path" "$TMPDIR"
 	extract "module.prop" "$TMPDIR"
