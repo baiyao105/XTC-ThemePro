@@ -4,7 +4,6 @@
 # 不要修改这个文件，除非你知道你在做什么
 
 SKIPUNZIP=1
-export SKIPUNZIP=1
 BASE="/sdcard/Android/baiyao105/ThemePro"
 
 extract() {
@@ -12,7 +11,7 @@ extract() {
 }
 
 get_config() {
-	grep -E "^[^#].*=$1=" "$TMPDIR/config.conf" | cut -f2 -d '='
+	grep "^$1=" "$TMPDIR/config.conf" | head -1 | cut -f2 -d '='
 }
 
 _grep_prop() {
@@ -26,7 +25,7 @@ _grep_prop() {
 
 mkdir -p "$BASE"
 
-on_sundry() {
+on_init() {
 	ui_print "- 正在解压临时文件(*>﹏<*)"
 	extract "Sundry/config.conf" "$TMPDIR"
 	extract "Sundry/hitokoto" "$TMPDIR"
@@ -50,13 +49,11 @@ on_sundry() {
 	Ostring=${hash:0:8}
 	log_enabled=$(get_config log)
 	log_path=$(get_config log_path)
-
 	if [ "$log_enabled" = "true" ]; then
 		mkdir -p "$log_path"
 		Flog="${log_path}/install.log"
 		exec 2>"${Flog}"
 		set -x
-		set -E
 		Clog=1
 		name="大大杳杳"
 	else
@@ -65,8 +62,7 @@ on_sundry() {
 		Flog="/dev/null"
 	fi
 	# 时间段
-	hour=$(date +%H | sed 's/^0*//')
-	[ -z "$hour" ] && hour=0
+	hour=$((10#$(date +%H)))
 	case $hour in
 	0-5) period="凌晨" ;;
 	6-11) period="上午" ;;
@@ -91,13 +87,16 @@ on_sundry() {
 	files_date=$(grep_prop date "$TMPDIR/.version")
 	imoo_ver=$(grep_prop ro.product.current.softversion)
 	produce=$(getprop ro.product.manufacturer)
+	if user_name=$(get_user_name); then
+		name="${name}-${user_name}"
+	fi
 }
 
 print_modname() {
 	ui_print "#####################################################"
 	ui_print "ThemePro - ${ver}(${code})_${Clog}"
 	ui_print "当前主题包版本: ${files_version}(${files_date})"
-	ui_print "● ${period}好,${name}_${Ostring}!"
+	ui_print "● ${period}好,${name} ヾ(≧▽≦*)o!"
 	ui_print "~ $best_text"
 	ui_print "~ 开始安装q(≧▽≦q)"
 	ui_print "#####################################################"
@@ -121,7 +120,7 @@ print_modname() {
 		is_junior="_N"
 	fi
 	# 颜色代号和junior一般都在xtcinfo.
-	ui_print "- 机型标识符: preset_$model${color}${is_junior}"
+	ui_print "- 机型标识符: preset_$model${color}${is_junior} @${Ostring}"
 }
 
 module_validation() {
@@ -142,23 +141,22 @@ module_validation() {
 	fi
 }
 
-sundry_shell() {
-	directories="
-        /data/adb/modules/theme_ful
-        /data/adb/modules/alltheme
-    "
-	for dir in ${directories}; do
-		if [ -d "$dir" ]; then
-			touch "$dir/skip_mount" "$dir/remove"
-		fi
-	done
+install_theme() {
+	disable_module() {
+		[ -d "$1" ] && touch "$1/skip_mount" "$1/remove"
+	}
+	disable_module "/data/adb/modules/theme_ful"
+	disable_module "/data/adb/modules/alltheme"
 	ui_print "- 正在安装个性主题♪(´▽｀)"
 	out=$(pm install -r -d -t "$TMPDIR/theme.apk" 2>&1) || {
-		echo "!! $out"
+		echo "!! 安装时失败: $out"
 		abort "- 安装失败, 记得检查核心破解哦~"
 	}
 	pm clear com.xtc.theme
+	cmd package compile -m everything-profile -f com.xtc.theme >&2 || true
+}
 
+on_release() {
 	ui_print "- 释放文件"
 	ui_print "- 过程比较久,请稍等一小会(≧﹏≦)"
 	Modata="/data/adb/modules/${id}"
@@ -170,8 +168,7 @@ sundry_shell() {
 		action.sh; do
 		extract "$f" "${MODPATH}"
 	done
-	unzip -oq "${ZIPFILE}" "system/*" -d "${MODPATH}" || abort "解压system失败"
-	unzip -oq "${ZIPFILE}" "Sundry/*" -d "${MODPATH}" || abort "解压挂载文件出错"
+	unzip -oq "${ZIPFILE}" "system/*" "Sundry/*" -d "${MODPATH}" || abort "解压system/Sundry失败"
 	echo "*/60 * * * * ${Modata}/Sundry/pre_execute.sh" >"${MODPATH}/root"
 	unzip -oq "${ZIPFILE}" "files/Themes/*" -d "${BASE}" || abort "解压主题文件出错"
 	unzip -oq "${ZIPFILE}" "files/Filp/*" -d "${MODPATH}/" || abort "解压Filp文件出错"
@@ -179,26 +176,19 @@ sundry_shell() {
 	mv -f "${BASE}/files/Themes" "${BASE}/Themes" || abort "移动主题失败"
 	mv -f "${MODPATH}/files/Filp" "${MODPATH}/${filp_path}" || abort "移动Filp失败"
 	rm -rf "${BASE}/files" "${MODPATH}/files"
-	cmd package compile -m everything-profile -f com.xtc.theme >&2 || true
 }
 
 set_permissions() {
-	chmod +x "${MODPATH}/themepro.sh"
-	chmod +x "${MODPATH}/Sundry/pre_execute.sh"
-	chmod +x "${MODPATH}/system/bin/themepro"
 	set_perm_recursive "${MODPATH}" 0 0 0755 0644
-	set_perm_recursive "${MODPATH}/root" 0 0 0755 0700 || true
 	set_perm_recursive "${MODPATH}/Sundry" 0 0 0755 0700
-	set_perm_recursive "${MODPATH}/service.sh" 0 0 0755 0700
-	set_perm_recursive "${MODPATH}/system/bin/themepro" 0 0 0755 0700
-	set_perm_recursive "${MODPATH}/themepro.sh" 0 0 0755 0700
-	ui_print "- 安装好啦ヾ(≧▽≦*)o"
-	ui_print "- 小贴士: 个性主题应用数据将会重置,可能丢失一些主题,是正常现象哦~"
-	ui_print "- 正在努力清理环境中哇 ＞﹏＜"
+	set_perm "${MODPATH}/root" 0 0 0755
+	set_perm "${MODPATH}/service.sh" 0 0 0755
+	set_perm "${MODPATH}/system/bin/themepro" 0 0 0755
+	set_perm "${MODPATH}/themepro.sh" 0 0 0755
 }
 
 get_user_name() {
-	query_result=$(content query --uri content://com.xtc.provider/BaseDataProvider/watchId/1 --projection name 2>/dev/null)
+	query_result=$(timeout 5 content query --uri content://com.xtc.provider/BaseDataProvider/watchId/1 --projection name 2>/dev/null) || return 1
 
 	if [ -z "$query_result" ] || [ "${query_result#*null}" != "$query_result" ]; then
 		return 1
@@ -213,17 +203,16 @@ get_user_name() {
 	fi
 }
 
-hello_user() {
-	if user_name=$(get_user_name); then
-		ui_print "- 你好，$user_name ヾ(≧▽≦*)o"
-	else
-		ui_print "- 你好 ＞﹏＜"
-	fi
+installer() {
+	on_init
+	print_modname
+	module_validation
+	install_theme
+	on_release
+	set_permissions
+	ui_print "- 安装好啦ヾ(≧▽≦*)o"
+	ui_print "- 小贴士: 个性主题应用数据将会重置,可能丢失一些主题,是正常现象哦~"
+	ui_print "- 正在努力清理环境中哇 ＞﹏＜"
 }
 
-hello_user
-on_sundry
-print_modname
-module_validation
-sundry_shell
-set_permissions
+installer
