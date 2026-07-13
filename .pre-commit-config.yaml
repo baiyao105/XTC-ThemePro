@@ -1,6 +1,6 @@
 # Pre-commit
 ci:
-  autoupdate_schedule: null
+  autoupdate_schedule: quarterly
   autofix_prs: true
   autoupdate_commit_msg: "chore: update pre-commit hooks"
 

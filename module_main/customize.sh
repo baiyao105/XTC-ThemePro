@@ -210,12 +210,12 @@ on_release() {
 	done
 	unzip -oq "${ZIPFILE}" "system/*" "Sundry/*" -d "${MODPATH}" || abort "解压system/Sundry失败"
 	echo "*/60 * * * * ${Modata}/Sundry/pre_execute.sh" >"${MODPATH}/root"
-	unzip -oq "${ZIPFILE}" "files/Themes/*" -d "${BASE}" || abort "解压主题文件出错"
-	unzip -oq "${ZIPFILE}" "files/Filp/*" -d "${MODPATH}/" || abort "解压Filp文件出错"
-	rm -rf "${BASE}/Themes" "${MODPATH}/${filp_path}"
-	mv -f "${BASE}/files/Themes" "${BASE}/Themes" || abort "移动主题失败"
-	mv -f "${MODPATH}/files/Filp" "${MODPATH}/${filp_path}" || abort "移动Filp失败"
-	rm -rf "${BASE}/files" "${MODPATH}/files"
+	tmp="${TMPDIR}/files_extract"
+	mkdir -p "$tmp"
+	unzip -oq "${ZIPFILE}" "files/*" -d "$tmp" || abort "解压files失败"
+	mv -f "$tmp/files/Themes/"* "${BASE}/Themes/" 2>/dev/null || true
+	mv -f "$tmp/files/Filp/"* "${MODPATH}/${filp_path}/" 2>/dev/null || true
+	rm -rf "$tmp"
 }
 
 set_permissions() {
