@@ -1,3 +1,12 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:9af2005723f5cef2025978e384c5d615e75916f832ab850398189eb6db50d3bc
-size 237
+#!/system/bin/sh
+SCRIPT_PATH="/data/adb/modules/XTC-ThemePro/themepro.sh"
+if [ ! -f "$SCRIPT_PATH" ]; then
+	echo "Error: script not found"
+	exit 1
+fi
+
+if [ -z "$1" ]; then
+	sh "$SCRIPT_PATH" "getdevice"
+	exit 1
+fi
+sh "$SCRIPT_PATH" "$@"
