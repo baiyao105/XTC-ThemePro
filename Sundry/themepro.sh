@@ -43,7 +43,7 @@ getdevice() {
 		echo "Chipid获取失败"
 		return 1
 	fi
-	Hwmac=$(cat /sys/class/net/wlan0/address)
+	Hwmac=$(cat /sys/class/net/wlan0/address 2>/dev/null || echo "unknown")
 	input_string="${bindnumber}${serverinner}${chipid}${Hwmac}"
 	hash=$(printf "%s" "$input_string" | sha256sum | awk '{print $1}')
 	Ostring=$(echo "$hash" | cut -c1-8)

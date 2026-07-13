@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 rm -rf /data/user/0/com.xtc.theme
 rm -rf /data/user/0/com.xtc.xws
 rm -rf /sdcard/Android/baiyao105/ThemePro

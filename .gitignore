@@ -5,3 +5,4 @@ test.sh
 /.git
 *.bak
 /test
+temp

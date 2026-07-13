@@ -11,7 +11,7 @@ extract() {
 }
 
 get_config() {
-	grep "^$1=" "$TMPDIR/config.conf" | head -1 | cut -f2 -d '='
+	grep -F "$1=" "$TMPDIR/config.conf"
 }
 
 _grep_prop() {
@@ -145,15 +145,55 @@ install_theme() {
 	disable_module() {
 		[ -d "$1" ] && touch "$1/skip_mount" "$1/remove"
 	}
+	ui_print "- 正在安装个性主题♪(´▽｀)"
+
+	apk="$TMPDIR/theme.apk"
+	chmod 644 "$apk"
+	install_ok=0
+	last_err=""
+	last_err=$(pm install -r -d -t "$apk" 2>&1)
+	if [ $? -eq 0 ]; then
+		install_ok=1
+	fi
+	if [ "$install_ok" -eq 0 ] && [ -d "/data/local/tmp" ]; then
+		ui_print "- 执行安装(local/tmp路径)"
+		cp -f "$apk" "/data/local/tmp/theme_install.apk" 2>/dev/null
+		last_err=$(pm install -r -d -t "/data/local/tmp/theme_install.apk" 2>&1)
+		if [ $? -eq 0 ]; then
+			install_ok=1
+		fi
+		rm -f "/data/local/tmp/theme_install.apk" 2>/dev/null
+	fi
+	if [ "$install_ok" -eq 0 ]; then
+		ui_print "- 执行安装(session)"
+		session_id=$(pm install-create -S "$(wc -c <"$apk" | tr -d ' ')" 2>&1)
+		if [ -n "$session_id" ]; then
+			real_id=$(echo "$session_id" | grep -o '[0-9]*')
+			if [ -n "$real_id" ]; then
+				cat "$apk" | pm install-write "$real_id" "base.apk" 2>&1
+				last_err=$(pm install-commit "$real_id" 2>&1)
+				if [ $? -eq 0 ]; then
+					install_ok=1
+				else
+					pm install-abandon "$real_id" >/dev/null 2>&1
+				fi
+			else
+				last_err="$session_id"
+			fi
+		fi
+	fi
+	if [ "$install_ok" -eq 0 ]; then
+		ui_print ""
+		ui_print "!! 安装时失败"
+		ui_print "!! 错误: $last_err"
+		ui_print "!! SELinux上下文: $(ls -Z "$apk" 2>/dev/null)"
+		abort "- 安装失败, 记得检查核心破解哦~"
+	fi
+
+	pm clear com.xtc.theme
 	disable_module "/data/adb/modules/theme_ful"
 	disable_module "/data/adb/modules/alltheme"
-	ui_print "- 正在安装个性主题♪(´▽｀)"
-	out=$(pm install -r -d -t "$TMPDIR/theme.apk" 2>&1) || {
-		echo "!! 安装时失败: $out"
-		abort "- 安装失败, 记得检查核心破解哦~"
-	}
-	pm clear com.xtc.theme
-	cmd package compile -m everything-profile -f com.xtc.theme >&2 || true
+	cmd package compile -m everything-profile -f com.xtc.theme >/dev/null 2>&1 || true
 }
 
 on_release() {

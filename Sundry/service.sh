@@ -1,4 +1,4 @@
-#!/sbin/sh
+#!/system/bin/sh
 # Script by XTC-ThemePro - @baiyao105
 MODDIR=${0%/*}
 Script="${MODDIR}/Sundry"
