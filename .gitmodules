@@ -1,3 +1,3 @@
 [submodule "files"]
-	path = files
+	path = module_main/files
 	url = https://github.com/baiyao105/XTC-Theme-Files.git
