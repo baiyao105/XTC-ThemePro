@@ -1,3 +1,9 @@
 module_main/system/vendor/** filter=lfs diff=lfs merge=lfs -text
-*.json text
-*.txt  text
+*.json text !filter
+*.txt  text !filter
+*.md text !filter
+*.yaml text !filter
+*.conf text !filter
+*.prop text !filter
+*.toml text !filter
+*.sh text !filter

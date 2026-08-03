@@ -1,3 +1,103 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a0229ed16e4f50cc74c785590aa43c32695b0e6281baebbccb398be6985f2695
-size 2274
+{
+  "configVersion": "android-watch_1716349239579",
+  "configs": [
+    {
+      "key": "Moment.CAMERA_INTEGRATION_1006",
+      "description": "是否支持相机系统整合",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.moment"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Moment.FRIEND_VIRTUAL_SELF_1005",
+      "description": "是否支持显示好友天才秀",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.moment",
+          "appVersion": ""
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Moment.FUN_SHORT_VIDEO_TAKE_SAME_1003",
+      "description": "是否支持趣拍视频-拍同款",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.moment",
+          "appVersion": ""
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Moment.FUN_SHORT_VIDEO_1002",
+      "description": "是否支持趣拍视频",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.moment"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Moment.LOCALE_DELETE_FRIEND_1004",
+      "description": "是否支持表端删好友",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.moment"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Moment.PERSONALITY_DRESS_1001",
+      "description": "是否支持个性装扮",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.moment"
+        }
+      ],
+      "type": 0
+    }
+  ]
+}

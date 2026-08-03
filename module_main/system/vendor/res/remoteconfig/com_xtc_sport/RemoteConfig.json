@@ -1,3 +1,484 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:be7555b555b86d1d4608b0c31de8f06079fbbcafc18eaeb20f5f10ef936c012e
-size 10768
+{
+  "configVersion": "android-watch_1716349239579",
+  "configs": [
+    {
+      "key": "Sport.FUN_SENSOR_FOREGROUND",
+      "description": "是否需要在前台服务中注册传感器",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_SUPPORT_PROF_REPORT",
+      "description": "是否显示运动的专业报告数据",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport",
+          "appVersion": "113500"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_JUDE_DATA_SHOW",
+      "description": "支持跳绳连跳显示",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND01",
+            "ND01-HK",
+            "ND01-SN",
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_STEP_DETAIL_DATA_SHOW",
+      "description": "支持跑步、行走步频、步幅显示",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND01",
+            "ND01-HK",
+            "ND01-SN",
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_DETAIL_SWIM_DATA_SHOW",
+      "description": "支持游泳划水次数、趟数、SWOLF、泳姿类型显示",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND01",
+            "ND01-SN",
+            "ND01-HK",
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_CAPSULE_STATUS",
+      "description": "支持胶囊状态显示",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND01",
+            "ND01-SN",
+            "ND01-HK",
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_SUPPORT_SPORT_TYPE",
+      "description": "动态配置运动支持类型",
+      "defaultValue": "[{\"sport_type\":8,\"enable\":0},{\"sport_type\":9,\"enable\":0},{\"sport_type\":1000,\"enable\":0},{\"sport_type\":1100,\"enable\":0},{\"sport_type\":1200,\"enable\":0},{\"sport_type\":1300,\"enable\":0},{\"sport_type\":1400,\"enable\":0}]",
+      "conditions": [
+        {
+          "models": [
+            "ND01",
+            "ND01-SN",
+            "ND01-HK",
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "[{\"sport_type\":8,\"enable\":1},{\"sport_type\":9,\"enable\":1},{\"sport_type\":1000,\"enable\":1},{\"sport_type\":1100,\"enable\":1},{\"sport_type\":1200,\"enable\":1},{\"sport_type\":1300,\"enable\":1},{\"sport_type\":1400,\"enable\":1}]",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 3
+    },
+    {
+      "key": "Sport.SYS_HEARTRATE",
+      "description": "有心率传感器",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "I32-QCH",
+            "ND01",
+            "ND01-SN",
+            "ND01-HK",
+            "ND03",
+            "ND07",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.SYS_WEAR_SENSOR",
+      "description": "有佩戴检查功能",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "I32-QCH",
+            "ND01",
+            "ND01-SN",
+            "ND01-HK",
+            "ND03",
+            "ND07",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.SYS_ACC_SENSOR",
+      "description": "只有3轴传感器",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25D"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_DYNAMIC_SELF",
+      "description": "使用动态形象动画",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I20",
+            "I25C",
+            "I25D",
+            "I25",
+            "I32",
+            "I32-QCH",
+            "ND01",
+            "ND01-SN",
+            "ND01-HK",
+            "ND03",
+            "ND07",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_SPORT_GDPR",
+      "description": "使用运动的gdpr",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "I32-QCH",
+            "ND01",
+            "ND01-SN",
+            "ND01-HK",
+            "ND03",
+            "ND07",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_NEED_PPG",
+      "description": "需要PPG权限",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "I32-QCH",
+            "ND01",
+            "ND01-SN",
+            "ND01-HK",
+            "ND03",
+            "ND07",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_SHARE_WATERMARK",
+      "description": "分享水印",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "I32-QCH",
+            "ND01",
+            "ND01-SN",
+            "ND01-HK",
+            "ND03",
+            "ND07",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_CREATIVITY_RUN",
+      "description": "支持创意跑",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I20",
+            "I25C",
+            "I25D",
+            "I25",
+            "I32",
+            "I32-QCH",
+            "ND01",
+            "ND01-SN",
+            "ND01-HK",
+            "ND03",
+            "ND07",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_SWIM",
+      "description": "支持游泳",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I32",
+            "I32-QCH",
+            "ND01",
+            "ND01-SN",
+            "ND01-HK",
+            "ND03",
+            "ND07",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_CLIMB",
+      "description": "支持爬山",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I32",
+            "I32-QCH",
+            "ND01",
+            "ND01-SN",
+            "ND01-HK",
+            "ND03",
+            "ND07",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_RIDE",
+      "description": "支持骑车",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I20",
+            "I25C",
+            "I25D",
+            "I25",
+            "I32",
+            "I32-QCH",
+            "ND01",
+            "ND01-SN",
+            "ND01-HK",
+            "ND03",
+            "ND07",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_WALK",
+      "description": "支持行走",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I20",
+            "I25C",
+            "I25D",
+            "I25",
+            "I32",
+            "I32-QCH",
+            "ND01",
+            "ND01-SN",
+            "ND01-HK",
+            "ND03",
+            "ND07",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_SKIING",
+      "description": "支持滑雪",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I32",
+            "I32-QCH",
+            "ND01",
+            "ND01-SN",
+            "ND01-HK",
+            "ND03",
+            "ND07",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_SUPPORT_FACE_PK",
+      "description": "支持面对面PK",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I20",
+            "I25C",
+            "I25D",
+            "I25",
+            "I32",
+            "I32-QCH",
+            "ND01",
+            "ND01-SN",
+            "ND01-HK",
+            "ND03",
+            "ND07",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Sport.FUN_SUPPORT_ACHIEVE",
+      "description": "支持成就勋章（香港ND01暂不支持）",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I20",
+            "I25C",
+            "I25D",
+            "I25",
+            "I32",
+            "I32-QCH",
+            "ND01",
+            "ND01-SN",
+            "ND03",
+            "ND07",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.sport"
+        }
+      ],
+      "type": 0
+    }
+  ]
+}

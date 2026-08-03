@@ -30,6 +30,17 @@
  - 由Magisk模块支持修改
  - 快捷简单增加替换主题
 
+## 第三方资源说明
+
+本项目包含部分修改自第三方的资源文件
+
+| 资源路径 | 说明 | 来源 |
+|---|---|---|
+| `module_main/files/` | 主题、表盘、充电动画、翻转动画等资源 | [XTC-Theme-Files](https://github.com/baiyao105/XTC-Theme-Files) (提取/修改于原始系统资源 / 第三方资源) |
+| `module_main/system/vendor/res/` | remoteconfig、setting、theme 等 | 提取于原始系统资源 |
+
+> **注意：** `files/` 目录下的部分主题资源由第三方贡献者提供(如 furina、fybloom、mikuq 等), 许可协议详见 [`module_main/files/README.md`](module_main/files/README.md) 中的标注。
+
 ## 安装须知
 > [!TIP]
 > 请在安卓8.1及以上机型中使用喵,Magisk需≥23.0~

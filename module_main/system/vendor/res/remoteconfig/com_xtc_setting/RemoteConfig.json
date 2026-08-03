@@ -1,3 +1,389 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:aa58ed5e7809ec93377b97619562c3fee32198e60658c737ec683196f4cd30c2
-size 8487
+{
+  "configVersion": "android-watch_1716349239579",
+  "configs": [
+    {
+      "key": "Setting.POWER_FUNC_SPORT",
+      "description": "长按启动运动",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.POWER_FUNC_SHUTDOWN",
+      "description": "长按关机重启",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.POWER_FUNC_VOICE_ASSISTANT",
+      "description": "启动语音助手",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.POWER_FUNC_CALL_ADMIN",
+      "description": "快速呼叫",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.POWER_FUNC_ALIPAY",
+      "description": "启动支付宝",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.SUPPORT_FLIP_AUTO_ANSWER",
+      "description": "支持翻转接听设置",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.DOUBLE_FINGER_LONG_PRESS_SCREENSHOT",
+      "description": "双指长按截屏 开关",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.SUPPORT_HALL_ANIM_SOUND_BIND",
+      "description": "支持动画和声音绑定",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.SUPPORT_HALL_SYSTEM_SOURCE",
+      "description": "支持系统装置联动资源",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.SUPPORT_DEFAULT_HEIGHT_MODE",
+      "description": "支持默认高清",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.UNLOCK_CONTENT_DEFAULT_SHOW",
+      "description": "是否默认显示锁屏内容",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.UNLOCK_PASSWORD_DEFAULT_SHOW",
+      "description": "是否默认显示锁屏密码",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.SUPPORT_PHOTO_LITERACY",
+      "description": "支持汉字速查",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "false",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.SUPPORT_SNAP_SHOT",
+      "description": "支持快拍",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.TRAFFIC_MONITOR",
+      "description": "支持流量监控",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.CHINA_LEGAL_HOLIDAY",
+      "description": "中国 法定节假日",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "false",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.SUPPORT_SYSTEM_UPDATE",
+      "description": "支持设置中系统升级",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.SUPPORT_AI_TRANSLATE",
+      "description": "支持取词翻译",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "false",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.SUPPORT_FEED_BACK",
+      "description": "支持支持意见反馈",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.SUPPORT_INTERNATIONAL_ROAMING",
+      "description": "是否支持国际漫游",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.SUPPORT_SWITCH_CAMERA",
+      "description": "支持切换摄像头",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.INTERNATIONAL_ROAMING",
+      "description": "国际漫游",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "false",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.OFF_SCREEN_WIFI_CONNECT_SWITCH",
+      "description": "熄屏保持wifi连接",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "false",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Setting.ABOUT_HALL_SETTING",
+      "description": "霍尔传感器",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.setting"
+        }
+      ],
+      "type": 0
+    }
+  ]
+}

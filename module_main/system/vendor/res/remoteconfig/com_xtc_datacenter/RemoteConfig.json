@@ -1,3 +1,933 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b5d90432517a518b084a1fcc2a909ad6e82aeb48cac89fe76551bfc0d0ed6531
-size 20981
+{
+  "configVersion": "android-watch_1716349239579",
+  "configs": [
+    {
+      "key": "DataCenter.FUNC_SUPPORT_UPLOAD_SUMMARY",
+      "description": "运动概要数据上报功能",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I20",
+            "I25C",
+            "I25D",
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I999",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.CMCC_DM_VERSION3_57",
+      "description": "移动 DM 3.0 版本（比如 收集心跳 等功能）",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I20",
+            "I25C",
+            "I25D",
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I999",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.CHINA_LEGAL_HOLIDAY_58",
+      "description": "中国 法定节假日",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I20",
+            "I25C",
+            "I25D",
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I999",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_BLE_LONG_CONNECT",
+      "description": "是否支持BLE长连接",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I20",
+            "I25D",
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I999",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_IOT",
+      "description": "是否支持IOT模式",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I20",
+            "I25C",
+            "I25D",
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I999",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_LOCATION_DAY_STATE_139",
+      "description": "普通高通机型支持全天状态数据上报",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25C"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_GPS_HIGH_FREQUENCY_138",
+      "description": "是否支持普通高通机型底层GPS高频打点",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25C"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_LOW_POWER",
+      "description": "是否支持切换低功率模式",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25D",
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_GUARD_THREE_EDITION_128",
+      "description": "I25、I32 全天守护3.0相关功能",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25D",
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_STEREO_LOC",
+      "description": "I32 立体定位4.0相关功能",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25D",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SPORT_STEP",
+      "description": "是否使用运动数据作为计步数据",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_SEND_PERSON_MSG",
+      "description": "下发个人信息功能",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_MOVE_SENSOR_NON_WAKEUP",
+      "description": "起停传感器不支持唤醒系统",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_SEND_DATA_NATIVE",
+      "description": "是否需要下发命令",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_PPG_CHANGE",
+      "description": "PPG开关功能",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_UPLOAD_LIVE_DATA_EXCLUDE_STEP_META_DATA",
+      "description": "运动移植，上报步数计算能量",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_WEAR_REMIND",
+      "description": "佩戴提醒功能",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_PULL_DATA",
+      "description": "数据拉取功能",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_USE_SPORT_HEALTH_GDPR_WHEN_UPLOAD_LIVE_DATA",
+      "description": "使用运动健康GDPR(2665、2673、2674)",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_WEAR_STATE_NOTIFY",
+      "description": "佩戴状态上报功能",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_REST_HIGH_HR_REMIND",
+      "description": "静息高心率提醒功能",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_HEALTH_SUPPORT",
+      "description": "健康所有功能",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "I500",
+            "ND03",
+            "ND07",
+            "ND01",
+            "ND01-SN",
+            "I32-QCH",
+            "ND01-HK",
+            "I25D",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_HIGH_TEMPERATURE_REMIND",
+      "description": "高温提醒功能",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "I500",
+            "ND03",
+            "ND07",
+            "ND01",
+            "ND01-SN",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_UPLOAD_PROTOCOL",
+      "description": "原始数据上报功能",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_SPORT_HIGH_HR_REMIND",
+      "description": "运动高心率提醒功能",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "ND01",
+            "ND01-SN",
+            "I500",
+            "ND03",
+            "ND07",
+            "I32-QCH",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_MALL_PATH",
+      "description": "商场高频轨迹",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND01",
+            "ND01-SN",
+            "I500",
+            "ND03",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter",
+          "version": "121800"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.IntervalInWorkStateByDeviceModel",
+      "description": "IOT蓝牙传输间隔",
+      "defaultValue": "39",
+      "conditions": [
+        {
+          "models": [
+            "I32",
+            "I32-QCH",
+            "I25C",
+            "I25D",
+            "ND07",
+            "I20"
+          ],
+          "value": "380",
+          "appPackage": "com.xtc.datacenter"
+        },
+        {
+          "models": [
+            "I25",
+            "ND01",
+            "ND01-SN",
+            "ND03",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "500",
+          "appPackage": "com.xtc.datacenter"
+        }
+      ],
+      "type": 1
+    },
+    {
+      "key": "DataCenter.lsm_cache_data_time",
+      "description": "楼层定位数据抽稀缓存数据时间（秒）",
+      "defaultValue": "1200",
+      "conditions": [
+        {
+          "models": [
+            "ND01",
+            "ND01-SN",
+            "ND03",
+            "ND07",
+            "I32",
+            "I32-QCH",
+            "I20",
+            "I25",
+            "I25C",
+            "I25D",
+            "ND01-HK",
+            "ND03-SN"
+          ],
+          "value": "1200",
+          "appPackage": "com.xtc.datacenter"
+        }
+      ],
+      "type": 1
+    },
+    {
+      "key": "DataCenter.location_type_path",
+      "description": "GPS 打点数据LOCATION_TYPE_PATH策略",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I25D",
+            "I32",
+            "I32-QCH"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.call_alarm_110",
+      "description": "报警电话110",
+      "defaultValue": "110",
+      "conditions": [
+        {
+          "models": [
+            "ND01",
+            "ND01-HK",
+            "ND01-SN",
+            "ND07",
+            "ND03",
+            "I32",
+            "I32-QCH",
+            "I20",
+            "I25",
+            "I25D",
+            "I25C",
+            "ND03-SN"
+          ],
+          "value": "110",
+          "appPackage": "com.xtc.datacenter"
+        }
+      ],
+      "type": 3
+    },
+    {
+      "key": "DataCenter.call_alarm_122",
+      "description": "报警电话",
+      "defaultValue": "122",
+      "conditions": [
+        {
+          "models": [
+            "ND01",
+            "ND01-HK",
+            "ND07",
+            "ND03",
+            "ND01-SN",
+            "I32",
+            "I32-QCH",
+            "I20",
+            "I25",
+            "I25D",
+            "I25C",
+            "ND03-SN"
+          ],
+          "value": "122",
+          "appPackage": "com.xtc.datacenter"
+        }
+      ],
+      "type": 3
+    },
+    {
+      "key": "DataCenter.call_alarm_119",
+      "description": "报警电话",
+      "defaultValue": "119",
+      "conditions": [
+        {
+          "models": [
+            "ND01",
+            "ND01-HK",
+            "ND01-SN",
+            "ND03",
+            "ND07",
+            "I32",
+            "I32-QCH",
+            "I25",
+            "I25D",
+            "I25C",
+            "I20",
+            "ND03-SN"
+          ],
+          "value": "119",
+          "appPackage": "com.xtc.datacenter"
+        }
+      ],
+      "type": 3
+    },
+    {
+      "key": "DataCenter.call_alarm_120",
+      "description": "报警电话",
+      "defaultValue": "120",
+      "conditions": [
+        {
+          "models": [
+            "ND01",
+            "ND01-SN",
+            "ND01-HK",
+            "ND07",
+            "ND03",
+            "I32",
+            "I32-QCH",
+            "I20",
+            "I25",
+            "I25D",
+            "I25C",
+            "ND03-SN"
+          ],
+          "value": "120",
+          "appPackage": "com.xtc.datacenter",
+          "version": ""
+        }
+      ],
+      "type": 3
+    },
+    {
+      "key": "DataCenter.wifi.scan.third.num",
+      "description": "wifi数量阈值，是否需要触发第三次wifi扫描",
+      "defaultValue": "3",
+      "conditions": [
+        {
+          "value": "3",
+          "appPackage": "com.xtc.datacenter"
+        }
+      ],
+      "type": 1
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_HIGH_TEMPERATURE_REMIND_FAST",
+      "description": "高温提醒阈值开机下发",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND01",
+            "ND01-HK",
+            "ND01-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_NONEED_WIFI_WARMUP",
+      "description": "wifi扫描不需要热身（不需要扫次2.4g）",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND01",
+            "ND01-HK",
+            "ND01-SN",
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_SUPPORT_HIGH_TEMPERATURE_RANGE",
+      "description": "是否需要减去0.5度",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "I25",
+            "I32",
+            "I32-QCH"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "DataCenter.FUNC_LOCKED_CAMERA_ROTATION",
+      "description": "5100机型拍照rotation270为正",
+      "defaultValue": "90",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "270",
+          "appPackage": "com.xtc.datacenter"
+        }
+      ],
+      "type": 1
+    },
+    {
+      "key": "DataCenter.FUNC_IS_SUPPORT_CAMERA2",
+      "description": "支持CAMERA2",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.datacenter"
+        }
+      ],
+      "type": 0
+    }
+  ]
+}

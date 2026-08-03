@@ -1,3 +1,37 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:3ea8ea58ecade11067eba2a9efda692214af3b9f680e28139f0053c327234a73
-size 788
+{
+  "configVersion": "android-watch_1716349239579",
+  "configs": [
+    {
+      "key": "Motion.EXERCISE_HEALTH_GDPR_SWITCH_1002",
+      "description": "是否使用健康GDPR开关",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.motion"
+        }
+      ],
+      "type": 0
+    },
+    {
+      "key": "Motion.PERSONALITY_DRESS_1001",
+      "description": "是否支持个性装扮",
+      "defaultValue": "false",
+      "conditions": [
+        {
+          "models": [
+            "ND03",
+            "ND03-SN"
+          ],
+          "value": "true",
+          "appPackage": "com.xtc.motion"
+        }
+      ],
+      "type": 0
+    }
+  ]
+}
