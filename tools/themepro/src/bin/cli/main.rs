@@ -1,6 +1,7 @@
 use themepro::sys;
 
 mod device;
+mod extract;
 mod hitokoto;
 mod install;
 mod prop;
@@ -21,6 +22,25 @@ enum Commands {
     Gethitokoto {
         /// 自定义hitokoto文件路径
         file: Option<String>,
+    },
+
+    /// 解压ZIP到目标路径
+    Extract {
+        /// 路径
+        zip_path: String,
+        /// 内源路径前缀
+        src: String,
+        /// 目标目录
+        dest: String,
+    },
+
+    /// 批量解压ZIP到多个目标路径
+    ExtractBatch {
+        /// 路径
+        zip_path: String,
+        /// src1:dest1 src2:dest2 ...
+        #[arg(num_args = 1..)]
+        mappings: Vec<String>,
     },
 
     /// 设备信息
@@ -58,6 +78,8 @@ fn main() {
     let moddir = sys::moddir();
 
     match cli.command {
+        Commands::Extract { zip_path, src, dest } => extract::run(&zip_path, &src, &dest),
+        Commands::ExtractBatch { zip_path, mappings } => extract::run_batch(&zip_path, &mappings),
         Commands::Gethitokoto { file } => hitokoto::run(file),
         Commands::Getdevice => device::run(&moddir),
         Commands::Getdeviceid { length } => device::run_id(length),

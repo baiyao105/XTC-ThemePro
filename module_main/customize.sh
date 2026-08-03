@@ -190,14 +190,9 @@ on_release() {
 		action.sh; do
 		extract "$f" "${MODPATH}"
 	done
-	unzip -oq "${ZIPFILE}" "system/*" "Sundry/*" -d "${MODPATH}" || abort "解压system/Sundry失败"
+	unzip -oq "${ZIPFILE}" "system/*" "Sundry/*" -d "${MODPATH}" || abort "! 解压system/Sundry失败"
 	echo "*/60 * * * * ${Modata}/Sundry/pre_execute.sh" >"${MODPATH}/root"
-	tmp="${TMPDIR}/files_extract"
-	mkdir -p "$tmp"
-	unzip -oq "${ZIPFILE}" "files/*" -d "$tmp" || abort "解压files失败"
-	mv -f "$tmp/files/Themes/"* "${BASE}/Themes/" 2>/dev/null || true
-	mv -f "$tmp/files/Filp/"* "${MODPATH}/${filp_path}/" 2>/dev/null || true
-	rm -rf "$tmp"
+	"${TMPDIR}/themepro" extract-batch "${ZIPFILE}" "files/Themes:${BASE}/Themes" "files/Filp:${MODPATH}/${filp_path}" >/dev/null || abort "! 解压files失败"
 }
 
 set_permissions() {

@@ -52,9 +52,3 @@ repos:
         args:
           - "-d"
           - "{extends: default, rules: {line-length: disable}}"
-
-  - repo: https://github.com/pappasam/toml-sort
-    rev: v0.24.4
-    hooks:
-      - id: toml-sort-fix
-        args: ["--all", "--in-place"]
