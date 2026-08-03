@@ -14,17 +14,6 @@ get_config() {
 	grep -F "$1=" "$TMPDIR/config.conf"
 }
 
-_grep_prop() {
-	REGEX="s/$1=//p"
-	shift
-	if [ $# -eq 0 ]; then
-		set -- "/system/build.prop" "/vendor/build.prop"
-	fi
-	sed -n "$REGEX" "$@" 2>/dev/null | head -n 1
-}
-
-mkdir -p "$BASE"
-
 on_init() {
 	ui_print "- 正在解压临时文件(*>﹏<*)"
 	extract "Sundry/config.conf" "$TMPDIR"
@@ -33,20 +22,17 @@ on_init() {
 	extract "files/Filp/filp_path" "$TMPDIR"
 	extract "module.prop" "$TMPDIR"
 	extract "files/.version" "$TMPDIR"
+	extract "system/bin/themepro" "$TMPDIR"
+	chmod +x "$TMPDIR/themepro"
 	filp_path=$(cat "$TMPDIR/filp_path")
-	bindnumber=$(getprop ro.boot.bindnumber)
-	chipid=$(getprop ro.boot.xtc.chipid)
+	ostype=$(getprop persist.sys.ostype)
+	color=$(getprop ro.xtcwatch.color)
 	model=$(getprop ro.product.innermodel)
 	serverinner=$(getprop persist.sys.serverinner)
-	ostype=$(getprop persist.sys.ostype)
-	is_junior=$(echo "$ostype" | grep -q "junior" && echo "青春系统" || echo "非青春系统")
-	color=$(getprop ro.xtcwatch.color)
 	[ -n "$color" ] && color="_$color"
 	[ -z "$serverinner" ] && serverinner="$model"
-	[ -z "$chipid" ] && abort "Chipid获取失败"
-	Hwmac=$(cat /sys/class/net/wlan0/address 2>/dev/null || echo "unknown")
-	hash=$(printf "%s" "${bindnumber}${serverinner}${chipid}${Hwmac}" | sha256sum | awk '{print $1}')
-	Ostring=${hash:0:8}
+	is_junior=$(echo "$ostype" | grep -q "junior" && echo "青春系统" || echo "非青春系统")
+	deviceid=$("${TMPDIR}/themepro" getdeviceid)
 	log_enabled=$(get_config log)
 	log_path=$(get_config log_path)
 	if [ "$log_enabled" = "true" ]; then
@@ -70,10 +56,8 @@ on_init() {
 	17-18) period="傍晚" ;;
 	*) period="晚上" ;;
 	esac
-	# 一言
 	if [ -f "$TMPDIR/hitokoto" ]; then
-		best_text=$(sed -n 's/.*text:\[\(.*\)\]/\1/p' "$TMPDIR/hitokoto" |
-			tr ',' '\n' | sed 's/"//g' | shuf -n 1)
+		best_text=$("${TMPDIR}/themepro" gethitokoto "${TMPDIR}/hitokoto")
 	else
 		best_text="唔?"
 	fi
@@ -87,9 +71,8 @@ on_init() {
 	files_date=$(grep_prop date "$TMPDIR/.version")
 	imoo_ver=$(grep_prop ro.product.current.softversion)
 	produce=$(getprop ro.product.manufacturer)
-	if user_name=$(get_user_name); then
-		name="${name}-${user_name}"
-	fi
+	user_name=$("${TMPDIR}/themepro" query name 2>/dev/null)
+	[ -n "$user_name" ] && name="${name}-${user_name}"
 }
 
 print_modname() {
@@ -100,7 +83,6 @@ print_modname() {
 	ui_print "~ $best_text"
 	ui_print "~ 开始安装q(≧▽≦q)"
 	ui_print "#####################################################"
-	echo "${ver}" >"${BASE}/version"
 	details="${imoo_ver}_${produce}${color}.${cta}(${cta_ver}).${API}"
 	case "$model" in
 	I20) ui_print "- 您的机型: Z6DFB-${details}" ;;
@@ -120,7 +102,7 @@ print_modname() {
 		is_junior="_N"
 	fi
 	# 颜色代号和junior一般都在xtcinfo.
-	ui_print "- 机型标识符: preset_$model${color}${is_junior} @${Ostring}"
+	ui_print "- 机型标识符: preset_$model${color}${is_junior} @${deviceid}"
 }
 
 module_validation() {
@@ -200,10 +182,10 @@ on_release() {
 	ui_print "- 释放文件"
 	ui_print "- 过程比较久,请稍等一小会(≧﹏≦)"
 	Modata="/data/adb/modules/${id}"
-	mkdir -p "${MODPATH}/system/bin" "${MODPATH}/Sundry" "${BASE}/Themes" "${MODPATH}/${filp_path}"
+	mkdir -p "${MODPATH}/system/bin" "${MODPATH}/Sundry" "${BASE}" "${BASE}/Themes" "${MODPATH}/${filp_path}"
+	echo "${ver}" >"${BASE}/version"
 	for f in \
 		module.prop \
-		Sundry/themepro.sh \
 		uninstall.sh \
 		action.sh; do
 		extract "$f" "${MODPATH}"
@@ -224,23 +206,6 @@ set_permissions() {
 	set_perm "${MODPATH}/root" 0 0 0755
 	set_perm "${MODPATH}/service.sh" 0 0 0755
 	set_perm "${MODPATH}/system/bin/themepro" 0 0 0755
-	set_perm "${MODPATH}/themepro.sh" 0 0 0755
-}
-
-get_user_name() {
-	query_result=$(timeout 5 content query --uri content://com.xtc.provider/BaseDataProvider/watchId/1 --projection name 2>/dev/null) || return 1
-
-	if [ -z "$query_result" ] || [ "${query_result#*null}" != "$query_result" ]; then
-		return 1
-	fi
-	user_name="${query_result#*name=}"
-	user_name="${user_name%%[[:space:]]*}"
-	user_name="${user_name%%,*}"
-	if [ -n "$user_name" ]; then
-		echo "$user_name"
-	else
-		return 1
-	fi
 }
 
 installer() {
