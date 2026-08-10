@@ -33,6 +33,7 @@ on_init() {
 	deviceid=$("${TMPDIR}/themepro" getdeviceid)
 	log_enabled=$(get_config log)
 	log_path=$(get_config log_path)
+	caremeos_image_version=$(get_config caremeos_image_version)
 	if [ "$log_enabled" = "true" ]; then
 		mkdir -p "$log_path"
 		Flog="${log_path}/install.log"
@@ -77,6 +78,7 @@ print_modname() {
 	ui_print "#####################################################"
 	ui_print "ThemePro - ${ver}(${code})_${Clog}"
 	ui_print "当前主题包版本: ${files_version}(${files_date})"
+	ui_print "选择的caremeos展示图版本: ${caremeos_image_version}"
 	ui_print "● ${period}好,${name} ヾ(≧▽≦*)o!"
 	ui_print "~ $best_text"
 	ui_print "~ 开始安装q(≧▽≦q)"
@@ -185,12 +187,13 @@ on_release() {
 	for f in \
 		module.prop \
 		uninstall.sh \
+		service.sh \
 		action.sh; do
 		extract "$f" "${MODPATH}"
 	done
 	unzip -oq "${ZIPFILE}" "system/*" "Sundry/*" -d "${MODPATH}" || abort "! 解压system/Sundry失败"
 	echo "*/60 * * * * ${Modata}/Sundry/pre_execute.sh" >"${MODPATH}/root"
-	"${TMPDIR}/themepro" extract-batch "${ZIPFILE}" "files/Themes:${BASE}/Themes" >/dev/null || abort "! 解压files失败"
+	"${TMPDIR}/themepro" extract-batch "${ZIPFILE}" "files/Themes:${BASE}/Themes" "files/caremeos/${caremeos_image_version}:${MODPATH}/system/vendor/res/theme"  >/dev/null || abort "! 解压files失败"
 }
 
 set_permissions() {
