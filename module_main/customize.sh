@@ -19,12 +19,10 @@ on_init() {
 	extract "Sundry/config.conf" "$TMPDIR"
 	extract "Sundry/hitokoto" "$TMPDIR"
 	extract "files/theme.apk" "$TMPDIR"
-	extract "files/Filp/filp_path" "$TMPDIR"
 	extract "module.prop" "$TMPDIR"
 	extract "files/.version" "$TMPDIR"
 	extract "system/bin/themepro" "$TMPDIR"
 	chmod +x "$TMPDIR/themepro"
-	filp_path=$(cat "$TMPDIR/filp_path")
 	ostype=$(getprop persist.sys.ostype)
 	color=$(getprop ro.xtcwatch.color)
 	model=$(getprop ro.product.innermodel)
@@ -182,7 +180,7 @@ on_release() {
 	ui_print "- 释放文件"
 	ui_print "- 过程比较久,请稍等一小会(≧﹏≦)"
 	Modata="/data/adb/modules/${id}"
-	mkdir -p "${MODPATH}/system/bin" "${MODPATH}/Sundry" "${BASE}" "${BASE}/Themes" "${MODPATH}/${filp_path}"
+	mkdir -p "${MODPATH}/system/bin" "${MODPATH}/Sundry" "${BASE}" "${BASE}/Themes"
 	echo "${ver}" >"${BASE}/version"
 	for f in \
 		module.prop \
@@ -192,7 +190,7 @@ on_release() {
 	done
 	unzip -oq "${ZIPFILE}" "system/*" "Sundry/*" -d "${MODPATH}" || abort "! 解压system/Sundry失败"
 	echo "*/60 * * * * ${Modata}/Sundry/pre_execute.sh" >"${MODPATH}/root"
-	"${TMPDIR}/themepro" extract-batch "${ZIPFILE}" "files/Themes:${BASE}/Themes" "files/Filp:${MODPATH}/${filp_path}" >/dev/null || abort "! 解压files失败"
+	"${TMPDIR}/themepro" extract-batch "${ZIPFILE}" "files/Themes:${BASE}/Themes" >/dev/null || abort "! 解压files失败"
 }
 
 set_permissions() {
