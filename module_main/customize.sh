@@ -11,7 +11,7 @@ extract() {
 }
 
 get_config() {
-	grep -F "$1=" "$TMPDIR/config.conf"
+	grep -F "$1=" "$TMPDIR/config.conf" | cut -d= -f2-
 }
 
 on_init() {
