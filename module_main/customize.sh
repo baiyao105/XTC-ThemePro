@@ -193,7 +193,7 @@ on_release() {
 	done
 	unzip -oq "${ZIPFILE}" "system/*" "Sundry/*" -d "${MODPATH}" || abort "! 解压system/Sundry失败"
 	echo "*/60 * * * * ${Modata}/Sundry/pre_execute.sh" >"${MODPATH}/root"
-	"${TMPDIR}/themepro" extract-batch "${ZIPFILE}" "files/Themes:${BASE}/Themes" "files/caremeos/${caremeos_image_version}:${MODPATH}/system/vendor/res/theme"  >/dev/null || abort "! 解压files失败"
+	"${TMPDIR}/themepro" extract-batch "${ZIPFILE}" "files/Themes:${BASE}/Themes" "files/caremeos/${caremeos_image_version}:${MODPATH}/system/vendor/res/theme" >/dev/null || abort "! 解压files失败"
 }
 
 set_permissions() {
